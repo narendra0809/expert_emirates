@@ -1,0 +1,164 @@
+import React from "react";
+import image from "../../assets/heroSectionImages/logo.png";
+import bgImage from "../../assets/heroSectionImages/moonBG.png";
+import icon1 from "../../assets/heroSectionImages/image 10.png";
+import icon2 from "../../assets/heroSectionImages/image 11.png";
+import icon3 from "../../assets/heroSectionImages/image 12.png";
+import { FaInstagram, FaFacebookF, FaYoutube, FaXTwitter } from "react-icons/fa6";
+
+const GradientDefs = () => (
+  <svg width="0" height="0">
+    <defs>
+      <linearGradient id="gold-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stopColor="#FFE976" />
+        <stop offset="50%" stopColor="#C0971C" />
+        <stop offset="100%" stopColor="#281000" />
+      </linearGradient>
+    </defs>
+  </svg>
+);
+
+const ResponsiveCardSection = () => {
+  return (
+    <div className="flex flex-wrap justify-center items-start gap-6 px-4 py-8 bg-black">
+      <GradientDefs />
+
+      {/* Expert Emirates Card */}
+      <div className="w-full sm:w-1/2 lg:w-1/3 flex justify-center">
+        <div
+          className="w-80 h-80 relative rounded-2xl overflow-hidden shadow-md border border-transparent hover:border-yellow-500 transition-all duration-500"
+          style={{
+            backgroundImage: `url(${bgImage})`,
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+          }}
+        >
+          <div className="absolute inset-0 flex flex-col items-center justify-center text-center z-10">
+            <img src={image} alt="Logo" className="w-24 h-20 mb-2" />
+            <h2
+              className="text-xl font-semibold text-transparent bg-clip-text"
+              style={{
+                backgroundImage: "linear-gradient(180deg, #FFE976, #C0971C, #281000)",
+              }}
+            >
+              EXPERT EMIRATES
+            </h2>
+            <p className="text-white text-xs">TURNING HOPES INTO REALITY</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Pricing Card */}
+      <div className="w-full sm:w-1/2 lg:w-1/3 flex justify-center">
+        <div
+          className="relative w-full max-w-md h-[360px] rounded-2xl p-6 border border-gray-900 hover:border-yellow-600 transition-all duration-500 bg-cover bg-center bg-no-repeat"
+          style={{ backgroundImage: `url(${bgImage})` }}
+        >
+          {/* Top icons */}
+          <div className="absolute top-4 right-4 flex gap-2 z-10">
+            {[icon1, icon2, icon3].map((icon, i) => (
+              <div
+                key={i}
+                className="w-10 h-10 rounded-full flex items-center justify-center"
+                style={{
+                  background: "linear-gradient(180deg, #FFE976, #C0971C, #281000)",
+                  boxShadow: "0 0 12px rgba(255, 217, 0, 0.6)",
+                }}
+              >
+                <img
+                  src={icon}
+                  alt={`icon-${i}`}
+                  className="w-6 h-6"
+                  style={{
+                    filter:
+                      "brightness(1.1) saturate(120%) sepia(100%) hue-rotate(-15deg) contrast(1.2)",
+                  }}
+                />
+              </div>
+            ))}
+          </div>
+
+          {/* Text */}
+          <div className="relative z-10 text-white text-left mt-10">
+            <h2 className="text-md sm:text-xl md:text-3xl font-bold mb-3 leading-snug">
+              <span
+                className="text-transparent bg-clip-text"
+                style={{
+                  backgroundImage:
+                    "linear-gradient(180deg, #281000 -17.24%, #C0971C 16.61%, #FFE976 48.47%, #C0971C 81.66%, #281000 115.52%)",
+                }}
+              >
+                GET TO KNOW OUR <br />
+                PLANS AND PRICING
+              </span>
+            </h2>
+            <p className="text-[10px] md:text-sm mt-3 uppercase tracking-wide">
+              Your trading deserves the best — discover our ultra-low pricing, trusted by
+              professionals in Forex, Gold & Crypto.
+            </p>
+
+            {/* CTA Button */}
+            <div className="mt-6">
+              <div className="p-[2px] rounded-full bg-[linear-gradient(90deg,#281000,#C0971C,#FFE976,#C0971C,#281000)]">
+                <button className="w-[130px] h-[52px] rounded-full bg-black text-white text-sm font-medium tracking-wider relative overflow-hidden transition-all duration-500 hover:text-black hover:bg-[linear-gradient(90deg,#281000,#C0971C,#FFE976,#C0971C,#281000)]">
+                  <span className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+                    Pricing
+                  </span>
+                  <span className="group-hover:opacity-0 transition-opacity duration-500">
+                    Plan
+                  </span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Social Icons Card */}
+      <div className="w-full sm:w-1/2 lg:w-1/3 flex justify-center">
+        <div
+          className="relative w-80 h-80 rounded-2xl p-6 border-2 border-gray-900 bg-cover bg-center bg-no-repeat flex flex-col justify-center items-center gap-10"
+          style={{ backgroundImage: `url(${bgImage})` }}
+        >
+          {/* Icons Row 1 */}
+          <div className="flex gap-6">
+            {[FaInstagram, FaFacebookF].map((Icon, i) => (
+              <div
+                key={i}
+                className="w-16 h-16 rounded-full flex items-center justify-center"
+                style={{
+                  background: "linear-gradient(180deg, #FFE976, #C0971C, #281000)",
+                  boxShadow: "0 0 12px rgba(255, 217, 0, 0.6)",
+                }}
+              >
+                <div className="bg-black w-12 h-12 rounded-full flex items-center justify-center">
+                  <Icon className="text-3xl" style={{ fill: "url(#gold-gradient)" }} />
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Icons Row 2 */}
+          <div className="flex gap-6">
+            {[FaYoutube, FaXTwitter].map((Icon, i) => (
+              <div
+                key={i}
+                className="w-16 h-16 rounded-full flex items-center justify-center"
+                style={{
+                  background: "linear-gradient(180deg, #FFE976, #C0971C, #281000)",
+                  boxShadow: "0 0 12px rgba(255, 217, 0, 0.6)",
+                }}
+              >
+                <div className="bg-black w-12 h-12 rounded-full flex items-center justify-center">
+                  <Icon className="text-3xl" style={{ fill: "url(#gold-gradient)" }} />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default ResponsiveCardSection;

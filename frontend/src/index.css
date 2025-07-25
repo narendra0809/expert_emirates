@@ -1,0 +1,219 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap");
+
+@keyframes marquee-left {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes marquee-right {
+  0% {
+    transform: translateX(-50%);
+  }
+  100% {
+    transform: translateX(0%);
+  }
+}
+
+.marquee-left {
+  animation: marquee-left 10s linear infinite;
+}
+
+.marquee-right {
+  animation: marquee-right 10s linear infinite;
+}
+
+@layer utilities {
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .no-scrollbar {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+  }
+}
+
+.gradient-text {
+  background: linear-gradient(
+    180deg,
+    #e26817 7.74%,
+    #c0971c 8.96%,
+    #ffe976 24.67%,
+    #c0971c 41.04%,
+    #e16919 3.74%
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  color: transparent;
+  /* font-family: Arial, sans-serif; */
+}
+
+@keyframes scrollX {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-scrollX {
+  animation: scrollX 30s linear infinite;
+}
+
+:root {
+  --Dark-grey: #121117;
+}
+
+/* Hide scrollbar for all browsers */
+.scrollbar-hidden {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+}
+.scrollbar-hidden::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
+}
+
+.btn-gradient {
+  background: linear-gradient(
+    to right,
+    #281000 0%,
+    #c0971c 30%,
+    #ffe976 50%,
+    #c0971c 70%,
+    #281000 100%
+  );
+}
+
+.btn-gradient-border {
+  border-radius: 9999px;
+  background: linear-gradient(to right #c8a12780 50% #66666600 0%);
+  box-shadow: 0 0 17px rgba(254, 214, 0, 0.2);
+  display: inline-block;
+}
+
+.text-gradient {
+  color: black;
+  background: linear-gradient(
+    to right,
+    #281000 0%,
+    #c0971c 30%,
+    #ffe976 50%,
+    #c0971c 70%,
+    #281000 100%
+  );
+}
+
+.custom-btn {
+  min-width: 140px;
+  height: 39px;
+  padding: 7px 18px;
+  border: none;
+  border-radius: 9999px;
+  background-color: black;
+  color: white;
+  font-family: "Poppins", sans-serif;
+  font-weight: bold;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+@media (min-width: 768px) {
+  .custom-btn {
+    min-width: 165px;
+  }
+}
+
+.custom-btn:hover {
+  background: linear-gradient(
+    90deg,
+    #281000 0%,
+    #c0971c 25.5%,
+    #ffe976 49.5%,
+    #c0971c 74.5%,
+    #281000 100%
+  );
+  color: #1e1e2f;
+}
+
+/* buttons.css */
+.golden-button-wrapper {
+  @apply p-[0.1px] rounded-full bg-[linear-gradient(90deg,#281000_0%,#C0971C_25.5%,#FFE976_49.5%,#C0971C_74.5%,#281000_100%)] shadow-[0_0_10px_rgba(254,214,0,0.15)];
+}
+
+.golden-button {
+  @apply w-full h-[42px] px-[18px] py-[7px] rounded-full font-bold text-sm font-poppins text-white transition duration-300 bg-black hover:bg-gradient-to-r hover:from-yellow-900 hover:via-yellow-400 hover:to-yellow-900 hover:text-black;
+}
+
+.golden-button1-wrapper {
+  @apply p-[1.3px] rounded-full bg-[linear-gradient(90deg,#281000_0%,#C0971C_25.5%,#FFE976_49.5%,#C0971C_74.5%,#281000_100%)] shadow-[0_0_10px_rgba(254,214,0,0.15)];
+}
+
+.golden-button1 {
+  @apply w-full h-[42px] px-[18px] py-[7px] rounded-full font-bold text-sm font-poppins text-black transition duration-300
+  hover:bg-black hover:text-white hover:bg-none;
+  background-image: linear-gradient(
+    90deg,
+    #281000 1%,
+    #c0971c 20%,
+    #ffe976 50%,
+    #c0971c 80%,
+    #281000 100%
+  );
+}
+
+.gradient-border {
+  position: relative;
+  border: 2px solid transparent;
+  background: linear-gradient(black, black) padding-box,
+    linear-gradient(to right, #ffd700, #ff8c00, #ffd700) border-box;
+  color: white;
+}
+
+.custom-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: 9999;
+  width: 224px;
+  background: rgba(0, 0, 0, 0.6);
+  border-radius: 15px;
+  padding: 12px 4px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(6px);
+}
+
+.custom-dropdown::before,
+.custom-dropdown::after {
+  content: "";
+  position: absolute;
+  top: 6px;
+  bottom: 6px;
+  width: 2px;
+  border-radius: 37px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  background: linear-gradient(to bottom, #281000, #ffe976, #281000);
+}
+
+.custom-dropdown::before {
+  left: 0;
+}
+
+.custom-dropdown::after {
+  right: 0;
+}
+
+.custom-dropdown:hover::before,
+.custom-dropdown:hover::after {
+  opacity: 1;
+}
