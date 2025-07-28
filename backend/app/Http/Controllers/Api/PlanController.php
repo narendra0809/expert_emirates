@@ -8,85 +8,59 @@ use App\Models\Transaction;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Http\Response;
 
 class PlanController extends Controller
 {
     public function index()
     {
-        $plans = Plan::get();
+        $plans = Plan::all();
         return response()->json($plans);
     }
-
-    public function store(Request $request)
-    {
-
-    try{
-    $request->merge([
-        'features' => json_decode($request->features, true)
-    ]);
-        $request->validate([
-            'name' => 'required|string|max:255|unique:plans,name',
-            'description' => 'required|string',
-            'price' => 'required|numeric',
-            'duration'=>'required|string',
-            "features"=>"required|array",
-        ]);
-    }
-    catch (\Exception $e) {
-        \Log::error('Error creating plan: ' . $e->getMessage());
-        return response()->json([
-            'success' => false,
-            'message' => 'Error creating plan',
-            'error' => $e->getMessage()
-        ], 500);
-    }
-    $plan = Plan::create([
-            'name' => $request->name,
-            'description' => $request->description,
-            'price' => $request->price,
-            'duration'=> $request->duration,
-            "features"=> $request->features,
-    ]);
-        return response()->json($plan, 201);
-    }
-    public function show(Plan $plan)
+ public function show(Plan $plan)
     {
         return response()->json($plan);
     }
-
-public function update(Request $request, $plan)
-{   Log::info('Error updating plan: ' . $request->name);
-    try {
-        $request->merge([
-            'features' => json_decode($request->features, true)
-        ]);
-
-        $request->validate([
-            'name' => 'required|string|max:255|unique:plans,name,',
-            'description' => 'required|string',
-            'price' => 'required|numeric',
-            'duration' => 'required|string',
-            'features' => 'required|array',
-        ]);
-
-        $plan->update([
-            'name' => $request->name,
-            'description' => $request->description,
-            'price' => $request->price,
-            'duration' => $request->duration,
-            'features' => $request->features,
-        ]);
-
-        return response()->json($plan, 200);
-    } catch (\Exception $e) {
-        Log::error('Error updating plan: ' . $e->getMessage());
-        return response()->json([
-            'success' => false,
-            'message' => 'Error updating plan',
-            'error' => $e->getMessage()
-        ], 500);
+public function myPlans()
+    {
+        $plans = auth()->user()->plans()->with('category')->get();
+        return response()->json($plans);
     }
-}
+  public function store(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|string|max:255|unique:plans',
+            'description' => 'required|string',
+            'price' => 'required|integer',
+            'duration' => 'required|string',
+            'features' => 'required|json',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
+
+        $plan = Plan::create($request->all());
+        return response()->json($plan, Response::HTTP_CREATED);
+    }
+
+public function update(Request $request, Plan $plan)
+    {
+        $validator = Validator::make($request->all(), [
+            'name' => 'sometimes|string|max:255|unique:plans,name,' . $plan->id,
+            'description' => 'sometimes|string',
+            'price' => 'sometimes|integer',
+            'duration' => 'sometimes|string',
+            'features' => 'sometimes|json',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
+
+        $plan->update($request->all());
+        return response()->json(['message' => 'Plan updated', 'data' => $plan]);
+    }
     public function destroy(Plan $plan)
     {
         $plan->delete();
@@ -114,9 +88,5 @@ public function update(Request $request, $plan)
         return response()->json(['message' => 'Plan purchase initiated', 'transaction' => $transaction], 201);
     }
 
-    public function myPlans()
-    {
-        $plans = auth()->user()->plans()->with('category')->get();
-        return response()->json($plans);
-    }
+    
 }
