@@ -35,6 +35,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::apiResource('blogs', BlogController::class);
         Route::apiResource('blog-categories', BlogCategoryController::class);
         Route::apiResource('plans', PlanController::class);
+        // Route::post('add-plan',[PlanController::class,'store']);
         Route::apiResource('plan-categories', PlanCategoryController::class);
         Route::apiResource('transactions', TransactionController::class)->only(['index', 'show']);
         Route::apiResource('payment-gateways', PaymentGatewayController::class);

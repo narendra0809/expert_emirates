@@ -7,60 +7,86 @@ use App\Models\Plan;
 use App\Models\Transaction;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Log;
 
 class PlanController extends Controller
 {
     public function index()
     {
-        $plans = Plan::with('category')->get();
+        $plans = Plan::get();
         return response()->json($plans);
     }
 
     public function store(Request $request)
     {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'description' => 'required',
-            'price' => 'required|numeric',
-            'category_id' => 'required|exists:plan_categories,id',
-        ]);
 
-        $plan = Plan::create([
+    try{
+    $request->merge([
+        'features' => json_decode($request->features, true)
+    ]);
+        $request->validate([
+            'name' => 'required|string|max:255|unique:plans,name',
+            'description' => 'required|string',
+            'price' => 'required|numeric',
+            'duration'=>'required|string',
+            "features"=>"required|array",
+        ]);
+    }
+    catch (\Exception $e) {
+        \Log::error('Error creating plan: ' . $e->getMessage());
+        return response()->json([
+            'success' => false,
+            'message' => 'Error creating plan',
+            'error' => $e->getMessage()
+        ], 500);
+    }
+    $plan = Plan::create([
             'name' => $request->name,
-            'slug' => Str::slug($request->name),
             'description' => $request->description,
             'price' => $request->price,
-            'category_id' => $request->category_id,
-        ]);
-
+            'duration'=> $request->duration,
+            "features"=> $request->features,
+    ]);
         return response()->json($plan, 201);
     }
-
     public function show(Plan $plan)
     {
-        return response()->json($plan->load('category'));
-    }
-
-    public function update(Request $request, Plan $plan)
-    {
-        $request->validate([
-            'name' => 'sometimes|string|max:255',
-            'description' => 'sometimes',
-            'price' => 'sometimes|numeric',
-            'category_id' => 'sometimes|exists:plan_categories,id',
-        ]);
-
-        $plan->update([
-            'name' => $request->name ?? $plan->name,
-            'slug' => $request->name ? Str::slug($request->name) : $plan->slug,
-            'description' => $request->description ?? $plan->description,
-            'price' => $request->price ?? $plan->price,
-            'category_id' => $request->category_id ?? $plan->category_id,
-        ]);
-
         return response()->json($plan);
     }
 
+public function update(Request $request, $plan)
+{   Log::info('Error updating plan: ' . $request->name);
+    try {
+        $request->merge([
+            'features' => json_decode($request->features, true)
+        ]);
+
+        $request->validate([
+            'name' => 'required|string|max:255|unique:plans,name,',
+            'description' => 'required|string',
+            'price' => 'required|numeric',
+            'duration' => 'required|string',
+            'features' => 'required|array',
+        ]);
+
+        $plan->update([
+            'name' => $request->name,
+            'description' => $request->description,
+            'price' => $request->price,
+            'duration' => $request->duration,
+            'features' => $request->features,
+        ]);
+
+        return response()->json($plan, 200);
+    } catch (\Exception $e) {
+        Log::error('Error updating plan: ' . $e->getMessage());
+        return response()->json([
+            'success' => false,
+            'message' => 'Error updating plan',
+            'error' => $e->getMessage()
+        ], 500);
+    }
+}
     public function destroy(Plan $plan)
     {
         $plan->delete();

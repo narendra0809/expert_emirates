@@ -56,7 +56,7 @@ export default function Admin() {
           setIsCollapsed={setIsCollapsed}
           sidebarOpen={sidebarOpen}
         />
-        <div className="flex-1 overflow-y-auto md:ml-16">
+        <div className="flex-1 overflow-y-auto p-3 md:ml-16 md:pr-16">
           <Outlet />
         </div>
       </div>

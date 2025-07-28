@@ -48,18 +48,25 @@ export default function MetaPropertiesForm({ handleSubmit }) {
   };
 
   return (
-    <div className="min-h-screen bg-black text-white px-4 py-6">
-      <div className="max-w-5xl mx-auto rounded-xl bg-[#121117] p-6 space-y-6 shadow-md">
+    <div className="w-full min-h-screen bg-black text-white py-6">
+      <div className="rounded-xl bg-[#121117] p-6 space-y-6 shadow-md">
         <h2 className="text-xl font-semibold">Properties</h2>
-        <p className="text-sm text-gray-400 mb-4">Additional functions and attributes...</p>
+        <p className="text-sm text-[#637381] mb-4">
+          Additional functions and attributes...
+        </p>
 
         {/* Tags */}
         <div className="relative mb-6">
-          <label className="absolute -top-2 left-3 px-1 text-xs bg-[#121117] text-gray-400">Tags</label>
+          <label className="absolute -top-2 left-3 px-1 text-xs bg-[#121117] text-gray-400">
+            Tags
+          </label>
           <div className="border border-gray-700 bg-[#121117] p-3 rounded-md">
             <div className="flex flex-wrap gap-2 mb-2">
               {meta.tags.map((tag) => (
-                <span key={tag} className="flex items-center gap-1 bg-gray-700 text-sm px-3 py-1 rounded-full">
+                <span
+                  key={tag}
+                  className="flex items-center gap-1  text-sm px-3 py-1 rounded-full font-medium font-['Public_Sans'] leading-none bg-[#1D1D23]"
+                >
                   {tag}
                   <button onClick={() => removeItem("tags", tag)}>
                     <FaTimes size={10} />
@@ -79,32 +86,37 @@ export default function MetaPropertiesForm({ handleSubmit }) {
         </div>
 
         {/* Meta Title */}
-        <div className="relative mb-6">
-          <label className="absolute -top-2 left-3 px-1 text-xs bg-[#121117] text-gray-400">Meta Title</label>
+        <div className="mb-6">
           <input
             className="w-full bg-[#121117] text-white border border-gray-700 rounded-md px-4 py-2 focus:outline-none"
             value={meta.title}
+            placeholder="Meta title"
             onChange={(e) => setMeta({ ...meta, title: e.target.value })}
           />
         </div>
 
         {/* Meta Description */}
-        <div className="relative mb-6">
-          <label className="absolute -top-2 left-3 px-1 text-xs bg-[#121117] text-gray-400">Meta Description</label>
-          <input
+        <div className="mb-6">
+          <textarea
             className="w-full bg-[#121117] text-white border border-gray-700 rounded-md px-4 py-2 focus:outline-none"
             value={meta.description}
+            placeholder="Meta description"
             onChange={(e) => setMeta({ ...meta, description: e.target.value })}
           />
         </div>
 
         {/* Meta Keywords */}
         <div className="relative mb-6">
-          <label className="absolute -top-2 left-3 px-1 text-xs bg-[#121117] text-gray-400">Meta Keywords</label>
+          <label className="absolute -top-2 left-3 px-1 text-xs bg-[#121117] text-gray-400">
+            Meta Keywords
+          </label>
           <div className="border border-gray-700 bg-[#121117] p-3 rounded-md">
-            <div className="flex flex-wrap gap-2 mb-2">
+            <div className="flex flex-wrap gap-2 mb-2 ">
               {meta.keywords.map((tag) => (
-                <span key={tag} className="flex items-center gap-1 bg-gray-700 text-sm px-3 py-1 rounded-full">
+                <span
+                  key={tag}
+                  className="flex items-center gap-1  text-sm px-3 py-1 rounded-full font-medium font-['Public_Sans'] leading-none bg-[#1D1D23]"
+                >
                   {tag}
                   <button onClick={() => removeItem("keywords", tag)}>
                     <FaTimes size={10} />
@@ -125,7 +137,6 @@ export default function MetaPropertiesForm({ handleSubmit }) {
 
         {/* Enable Comments */}
         <div className="flex items-center gap-4">
-          <label className="text-sm">Enable comments</label>
           <Switch
             checked={meta.enableSocial}
             onChange={(val) => setMeta({ ...meta, enableSocial: val })}
@@ -139,14 +150,14 @@ export default function MetaPropertiesForm({ handleSubmit }) {
               } inline-block h-4 w-4 transform bg-white rounded-full transition`}
             />
           </Switch>
+          <label className="text-sm">Enable comments</label>
         </div>
       </div>
 
       {/* Footer black section with publish & buttons */}
-      <div className="max-w-5xl mx-auto bg-black px-6 py-6 rounded-b-xl mt-[-10px] flex flex-col md:flex-row justify-between items-center gap-6">
+      <div className="bg-black rounded-b-xl mt-10 flex flex-col md:flex-row justify-between items-center gap-6">
         {/* Publish Switch */}
         <div className="flex items-center gap-4">
-          <label className="text-sm text-white">Publish</label>
           <Switch
             checked={meta.publish}
             onChange={(val) => setMeta({ ...meta, publish: val })}
@@ -160,6 +171,7 @@ export default function MetaPropertiesForm({ handleSubmit }) {
               } inline-block h-4 w-4 transform bg-white rounded-full transition`}
             />
           </Switch>
+          <label className="text-sm text-white">Publish</label>
         </div>
 
         {/* Buttons */}
@@ -169,7 +181,7 @@ export default function MetaPropertiesForm({ handleSubmit }) {
           </button>
           <button
             onClick={handleSubmit}
-            className="px-6 py-2 rounded-3xl bg-gradient-to-l from-[#452e06] via-[#d1bf5a] to-[#452e06] text-black font-semibold"
+            className="text-gradient-2 px-6 py-2 rounded-3xl text-black font-semibold hover:brightness-110"
           >
             Create post
           </button>

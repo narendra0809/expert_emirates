@@ -41,19 +41,35 @@
 }
 
 .gradient-text {
-  background: linear-gradient(
-    180deg,
-    #e26817 7.74%,
-    #c0971c 8.96%,
-    #ffe976 24.67%,
-    #c0971c 41.04%,
-    #e16919 3.74%
+  background: var(
+    --gold-gradient,
+    linear-gradient(
+      180deg,
+      #281000 0%,
+      #c0971c 25.5%,
+      #ffe976 49.5%,
+      #c0971c 74.5%,
+      #281000 100%
+    )
   );
+  background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  background-clip: text;
-  color: transparent;
-  /* font-family: Arial, sans-serif; */
+}
+
+.text-gradient-2 {
+  border-radius: 77.609px;
+  border: 0.862px solid rgba(200, 161, 39, 0.5);
+  background: linear-gradient(
+    86deg,
+    #281000 0%,
+    #c0971c 25%,
+    #c2af49 50.5%,
+    #c0971c 74.5%,
+    #281000 100%
+  );
+  box-shadow: 0 0 17.246px 1.725px rgba(254, 214, 0, 0.2),
+    0 0 21.558px 0 rgba(255, 215, 0, 0.2) inset;
 }
 
 @keyframes scrollX {

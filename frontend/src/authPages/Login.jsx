@@ -64,6 +64,7 @@ export default function LoginPage() {
         dispatch(loginFailure(response.data.error));
         return;
       }
+      console.log(response.data);
       dispatch(loginSuccess(response.data));
       if (currentUser?.role === "admin") {
         navigate("/admin");

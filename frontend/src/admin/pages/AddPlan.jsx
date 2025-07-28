@@ -69,7 +69,7 @@ export default function AddPlan() {
   };
 
   return (
-    <div className="mt-5 sm:pr-10 bg-black text-white flex flex-col lg:flex-row gap-6">
+    <div className="mt-5  bg-black text-white flex flex-col lg:flex-row gap-6">
       {/* Add Plan Section */}
       <div className="w-full lg:w-1/2 bg-[#121117] p-6 rounded-xl shadow-md">
         <h1 className="text-xl sm:text-2xl font-bold bg-gradient-to-b from-[#281000] via-[#C0971C] to-[#FFE976] bg-clip-text text-transparent mb-6 tracking-wider">
@@ -104,6 +104,8 @@ export default function AddPlan() {
                 className="w-full px-4 py-2 mt-1 bg-transparent text-[#454545] border border-[#2c2c2e] rounded-md focus:outline-none"
               >
                 <option>Monthly</option>
+                <option>Quartarly</option>
+                <option>Half Yearly</option>
                 <option>Yearly</option>
               </select>
             </div>
@@ -126,7 +128,7 @@ export default function AddPlan() {
           {/* CONTENT */}
           <div className="relative mb-4">
             <label className="absolute -top-2 left-3 px-1 text-xs bg-[#121117] text-[#637381]">
-              Content
+              Description
             </label>
             <input
               type="text"
@@ -156,7 +158,7 @@ export default function AddPlan() {
               <input
                 key={index}
                 type="text"
-                value={feature}
+                placeholder={feature}
                 onChange={(e) => handleFeatureChange(index, e.target.value)}
                 className="w-full px-4 py-2 bg-transparent text-[#454545] border border-[#2c2c2e] rounded-md focus:outline-none"
               />

@@ -7,16 +7,12 @@ const UploadCard = ({ title, imgSrc, onUpload, onRemove }) => {
     <div className="bg-[#121117] border border-[#1e1e25] rounded-xl p-4 w-full md:w-[48%] shadow-md">
       <div className="flex flex-col md:flex-row items-center gap-6">
         {/* Left Side: Larger Image */}
-        <div className="bg-[#1d1b25] h-60 w-96 rounded-lg flex items-center justify-center overflow-hidden">
-          <img
-            src={imgSrc}
-            alt={title}
-            className="max-h-full max-w-full object-contain"
-          />
+        <div className="bg-[#1d1b25] w-2/3  h-60 rounded-lg flex items-center justify-center overflow-hidden">
+          <img src={imgSrc} alt={title} className="" />
         </div>
 
         {/* Right Side: Text + Buttons center aligned */}
-        <div className="flex flex-col justify-center h-full w-full text-center md:text-left">
+        <div className="flex flex-col justify-center text-center md:text-left">
           <div className="mb-4">
             <h3 className="text-white font-semibold text-lg">{title}</h3>
             <p className="text-sm text-gray-400">Size: 194 Width * 53 Height</p>
@@ -44,27 +40,25 @@ export default function LogoFaviconUpload() {
   const [favicon, setFavicon] = useState(faviconImage);
 
   return (
-    <div className="w-full bg-black p-4">
-      <div className="max-w-6xl mx-auto flex flex-col md:flex-row gap-6 justify-between flex-wrap">
-        <UploadCard
-          title="Logo Change"
-          imgSrc={logo}
-          onUpload={(e) => {
-            const file = e.target.files[0];
-            if (file) setLogo(URL.createObjectURL(file));
-          }}
-          onRemove={() => setLogo("")}
-        />
-        <UploadCard
-          title="Favicon Change"
-          imgSrc={favicon}
-          onUpload={(e) => {
-            const file = e.target.files[0];
-            if (file) setFavicon(URL.createObjectURL(file));
-          }}
-          onRemove={() => setFavicon("")}
-        />
-      </div>
+    <div className="flex flex-col md:flex-row justify-between flex-wrap gap-6 md:gap-4">
+      <UploadCard
+        title="Logo Change"
+        imgSrc={logo}
+        onUpload={(e) => {
+          const file = e.target.files[0];
+          if (file) setLogo(URL.createObjectURL(file));
+        }}
+        onRemove={() => setLogo("")}
+      />
+      <UploadCard
+        title="Favicon Change"
+        imgSrc={favicon}
+        onUpload={(e) => {
+          const file = e.target.files[0];
+          if (file) setFavicon(URL.createObjectURL(file));
+        }}
+        onRemove={() => setFavicon("")}
+      />
     </div>
   );
 }

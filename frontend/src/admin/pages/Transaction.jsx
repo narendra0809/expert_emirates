@@ -177,7 +177,7 @@ export default function Transaction() {
   ];
 
   return (
-    <div className="flex flex-col min-h-screen bg-black text-white sm:mr-10 sm:mb-10">
+    <div className="flex flex-col min-h-screen bg-black text-white sm:mb-10">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
         <h2 className="text-xl sm:text-2xl font-semibold">Transaction</h2>
       </div>
