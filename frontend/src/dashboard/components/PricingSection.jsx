@@ -26,7 +26,6 @@ export default function PricingSection({
     return () => window.removeEventListener("resize", checkIfMobile);
   }, []);
 
-  // Scroll to specific card with center alignment
   const scrollToCard = (index) => {
     if (isScrolling.current) return;
 
@@ -35,9 +34,7 @@ export default function PricingSection({
 
     const container = scrollContainerRef.current;
     const card = cardRefs.current[index];
-
     if (container && card) {
-      // Calculate center position
       const containerWidth = container.offsetWidth;
       const cardWidth = card.offsetWidth;
       const scrollPosition =
@@ -57,7 +54,6 @@ export default function PricingSection({
   // Handle scroll events
   const handleScroll = () => {
     if (isScrolling.current) return;
-
     const container = scrollContainerRef.current;
     if (!container) return;
 
@@ -139,7 +135,7 @@ export default function PricingSection({
                     : ""
                 }
                 ${isMobile && i !== activeIndex ? "hidden" : ""}
-                w-[280px] xs:w-[300px] sm:w-[300px] md:w-[300px] lg:w-[300px] h-full flex-shrink-0 snap-center
+                w-[340px] sm:w-[400px] h-full flex-shrink-0 snap-center
               `}
               style={{
                 transform: isMobile
@@ -148,7 +144,11 @@ export default function PricingSection({
                 opacity: isMobile && i !== activeIndex ? 0 : 1,
               }}
             >
-              <PricingCard plan={plan} highlight={i === activeIndex} />
+              <PricingCard
+                plan={plan}
+                highlight={i === activeIndex}
+                scrollToCard={() => scrollToCard(i)}
+              />
             </div>
           ))}
         </div>

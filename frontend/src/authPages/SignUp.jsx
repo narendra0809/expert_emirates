@@ -1,10 +1,12 @@
-import React, { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import facebook from "../assets/auth/facebook.png";
 import google from "../assets/auth/google.png";
 import apple from "../assets/auth/apple.png";
 import logo from "../assets/navlogo.png";
+import axios from "axios";
 import bgVideo from "../assets/auth/bgVideo.mp4";
+import { SERVER_URI } from "../constants/index.d";
 
 export default function SignUp() {
   const [form, setForm] = useState({
@@ -14,6 +16,7 @@ export default function SignUp() {
     password: "",
     confirmPassword: "",
   });
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const navigate = useNavigate();
   const videoRef = useRef(null);
@@ -22,22 +25,39 @@ export default function SignUp() {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
+    try {
+      if (Object.values(form).some((v) => v === "")) {
+        setError("All fields are required.");
+        return;
+      }
 
-    if (Object.values(form).some((v) => v === "")) {
-      setError("All fields are required.");
-      return;
+      if (form.password !== form.confirmPassword) {
+        setError("Passwords do not match.");
+        return;
+      }
+
+      setError("");
+
+      const response = await axios.post(`${SERVER_URI}/register`, {
+        name: `${form.firstName} ${form.lastName}`,
+        email: form.email,
+        password: form.password,
+        password_confirmation: form.confirmPassword,
+      });
+      if (response.status != 201) {
+        setError("Failed to regiter. Please try again");
+        throw new Error("Failed to register user !");
+      }
+      navigate("/login");
+    } catch (error) {
+      console.log(error);
+      setError(error.message);
+    } finally {
+      setLoading(false);
     }
-
-    if (form.password !== form.confirmPassword) {
-      setError("Passwords do not match.");
-      return;
-    }
-
-    setError("");
-    console.log("Registering user:", form);
-    navigate("/otp-verification", { state: { from: "sign-up" } });
   };
 
   useEffect(() => {
@@ -143,23 +163,23 @@ export default function SignUp() {
 
             <button
               type="submit"
-              className="btn-gradient text-black rounded-full w-full px-4 py-3 font-bold transition-colors"
+              disabled={loading}
+              className="btn-gradient text-black rounded-full w-full px-4 py-3 font-bold transition-colors hover:brightness-110  disabled:opacity-70"
             >
-              Sign up
+              {loading ? "Signing Up ..." : "Sign Up"}
             </button>
-
-            <div className="flex items-center justify-between gap-4 mt-4">
-              <button>
-                <img src={facebook} alt="facebook" />
-              </button>
-              <button>
-                <img src={google} alt="google" />
-              </button>
-              <button>
-                <img src={apple} alt="apple" />
-              </button>
-            </div>
           </form>
+          <div className="flex items-center justify-between gap-4 mt-4">
+            <button>
+              <img src={facebook} alt="facebook" />
+            </button>
+            <button>
+              <img src={google} alt="google" />
+            </button>
+            <button>
+              <img src={apple} alt="apple" />
+            </button>
+          </div>
 
           <p className="mt-6 text-center text-sm text-zinc-400">
             Already have an account?{" "}

@@ -10,6 +10,12 @@ import ReadBlog from "./blogdetail/ReadBlog";
 import Image from "./forex/Image";
 import UserDashboard from "./dashboard/components/UserDashboard";
 import UserProtectedRoute from "./dashboard/UserProtectedRoute";
+import AdminProtectedRoute from "./admin/AdminProtectedRoute";
+import AdminDashboard from "./admin/AdminDashboard";
+import AddPlan from "./admin/pages/AddPlan";
+import Transaction from "./admin/pages/Transaction";
+import AdminSettings from "./admin/pages/AdminSettings";
+import CreatePost from "./admin/pages/CreatePost";
 // import StatusByProcessChart from "./admindashboad/StatusByProcessChart";
 
 // Lazy-loaded components
@@ -52,6 +58,7 @@ export default function AppRoutes() {
 
   const hideNavbarFooter =
     location.pathname.startsWith("/dashboard") ||
+    location.pathname.startsWith("/admin") ||
     authRoutes.includes(location.pathname);
 
   return (
@@ -86,6 +93,8 @@ export default function AppRoutes() {
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/otp-verification" element={<OtpVerificationPage />} />
           <Route path="/reset-password" element={<ResetPasswordPage />} />
+          <Route path="/blog/read-blog/:blogId" element={<ReadBlog />} />
+          <Route path="/image" element={<Image />} />
           <Route path="/dashboard" element={<UserProtectedRoute />}>
             <Route index element={<UserDashboard />} />
             <Route path="/dashboard/buy-plan" element={<BuyPlan />} />
@@ -95,9 +104,13 @@ export default function AppRoutes() {
               element={<TransactionHistory />}
             />
           </Route>
-          <Route path="/blog/read-blog/:blogId" element={<ReadBlog />} />
-          <Route path="/image" element={<Image />} />
-          {/* <Route path="/admin" element={<StatusByProcessChart/>}/> */}
+          <Route path="/admin" element={<AdminProtectedRoute />}>
+            <Route index element={<AdminDashboard />} />
+            <Route path="/admin/add-plan" element={<AddPlan />} />
+            <Route path="/admin/transactions" element={<Transaction />} />
+            <Route path="/admin/blog" element={<CreatePost />} />
+            <Route path="/admin/setting" element={<AdminSettings />} />
+          </Route>
         </Routes>
       </Suspense>
       {!hideNavbarFooter && <Footer />}

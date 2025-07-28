@@ -1,4 +1,3 @@
-import React from "react";
 import { useState } from "react";
 import { FaUpload } from "react-icons/fa"; // Optional, you can use inline SVG if avoiding libraries
 
@@ -15,8 +14,12 @@ const BuyPlanForm = () => {
 
   return (
     <div className="w-full max-w-lg mx-auto bg-[#1A1A1F] text-white rounded-xl p-6 shadow-lg">
-      <h2 className="text-yellow-400 text-sm font-semibold mb-1">BUY NEW PLAN</h2>
-      <p className="text-sm text-gray-400 mb-6">Choose a plan that suits your trading needs.</p>
+      <h2 className="text-yellow-400 text-sm font-semibold mb-1">
+        BUY NEW PLAN
+      </h2>
+      <p className="text-sm text-gray-400 mb-6">
+        Choose a plan that suits your trading needs.
+      </p>
 
       {/* Plan Type */}
       <div className="mb-4">
@@ -39,7 +42,8 @@ const BuyPlanForm = () => {
       {/* Payment Methods */}
       <div className="mb-4">
         <label className="block text-sm font-medium mb-2 text-gray-300">
-          Choose Payment Method from the list below <span className="text-red-500">*</span>
+          Choose Payment Method from the list below{" "}
+          <span className="text-red-500">*</span>
         </label>
         <div className="grid grid-cols-2 gap-3">
           {paymentMethods.map((method) => (

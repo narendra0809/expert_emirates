@@ -1,8 +1,17 @@
 import { useLocation, Link } from "react-router-dom";
 import logo from "../../assets/dashboard/logo.png";
 import toggle from "../../assets/toggle.png";
-import { FiSettings, FiLogOut, FiLayout, FiRepeat, FiX } from "react-icons/fi";
+import {
+  FiSettings,
+  FiLogOut,
+  FiLayout,
+  FiRepeat,
+  FiPlus,
+  FiX,
+} from "react-icons/fi";
 import { BiSolidDashboard } from "react-icons/bi";
+import { useDispatch } from "react-redux";
+import { logout } from "../../features/user/userSlice";
 
 export default function Sidebar({
   isCollapsed,
@@ -10,10 +19,11 @@ export default function Sidebar({
   mobileOpen,
   setMobileOpen,
   isMobile,
+  isAdmin,
 }) {
   const location = useLocation();
-
-  const menuItems = [
+  const dispatch = useDispatch();
+  const UserMenuItems = [
     {
       icon: <BiSolidDashboard size={20} />,
       label: "Dashboard",
@@ -36,7 +46,39 @@ export default function Sidebar({
     },
   ];
 
+  const AdminMenuItems = [
+    {
+      icon: <BiSolidDashboard size={20} />,
+      label: "Dashboard",
+      url: "/admin",
+    },
+    {
+      icon: <FiPlus size={20} />,
+      label: "Add Plan",
+      url: "/admin/add-plan",
+    },
+    {
+      icon: <FiRepeat size={20} />,
+      label: "Transaction",
+      url: "/admin/transactions",
+    },
+    {
+      icon: <FiLayout size={20} />,
+      label: "Blog",
+      url: "/admin/blog",
+    },
+    {
+      icon: <FiSettings size={20} />,
+      label: "Settings",
+      url: "/admin/setting",
+    },
+  ];
+
   const isActive = (url) => location.pathname === url;
+
+  const handleLogout = () => {
+    dispatch(logout());
+  };
 
   return (
     <>
@@ -103,35 +145,36 @@ export default function Sidebar({
               )}
 
               <nav className="flex flex-col mt-8 space-y-4 px-2">
-                {menuItems.map(({ icon, label, url }, index) => {
-                  const active = isActive(url);
-                  return (
-                    <Link
-                      key={index}
-                      to={url}
-                      onClick={() => setMobileOpen(false)}
-                      className={`flex items-center gap-3 px-4 py-2 rounded-lg transition-all duration-200
+                {(isAdmin ? AdminMenuItems : UserMenuItems).map(
+                  ({ icon, label, url }, index) => {
+                    const active = isActive(url);
+                    return (
+                      <Link
+                        key={index}
+                        to={url}
+                        onClick={() => setMobileOpen(false)}
+                        className={`flex items-center gap-3 px-4 py-2 rounded-lg transition-all duration-200
                         ${
                           active
                             ? "btn-gradient text-black font-bold"
                             : "hover:bg-[#1a1921] text-gray-400"
                         }`}
-                      title={label}
-                    >
-                      <span>{icon}</span>
-                      {(!isCollapsed || isMobile) && (
-                        <span className="text-sm font-medium">{label}</span>
-                      )}
-                    </Link>
-                  );
-                })}
+                        title={label}
+                      >
+                        <span>{icon}</span>
+                        {(!isCollapsed || isMobile) && (
+                          <span className="text-sm font-medium">{label}</span>
+                        )}
+                      </Link>
+                    );
+                  }
+                )}
               </nav>
             </div>
 
             <div className="mt-auto mb-5">
-              <Link
-                to="/dashboard/logout"
-                onClick={() => setMobileOpen(false)}
+              <button
+                onClick={handleLogout}
                 className={`flex items-center gap-3 px-4 py-2 rounded-lg transition-all duration-200 hover:bg-[#1a1921] text-gray-400 ${
                   isCollapsed && !isMobile ? "justify-center px-0" : ""
                 }`}
@@ -141,7 +184,7 @@ export default function Sidebar({
                 {(!isCollapsed || isMobile) && (
                   <span className="text-sm font-medium">Logout</span>
                 )}
-              </Link>
+              </button>
             </div>
           </div>
         </aside>

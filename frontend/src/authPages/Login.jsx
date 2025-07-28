@@ -1,23 +1,25 @@
 import React, { useState, useEffect, useRef } from "react";
 import logo from "../assets/navlogo.png";
 import bgVideo from "../assets/auth/bgVideo.mp4";
+import { useSelector, useDispatch } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
+import { SERVER_URI } from "../constants/index.d";
+import {
+  loginFailure,
+  loginStart,
+  loginSuccess,
+} from "../features/user/userSlice";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
-  const [rememberMe, setRememberMe] = useState(false);
+  const { currentUser, loading, error } = useSelector((state) => state.user);
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const videoRef = useRef(null);
 
   useEffect(() => {
-    const savedEmail = localStorage.getItem("rememberedEmail");
-    if (savedEmail) {
-      setEmail(savedEmail);
-      setRememberMe(true);
-    }
-
     const attemptPlay = () => {
       if (videoRef.current) {
         videoRef.current.play().catch((error) => {
@@ -42,30 +44,34 @@ export default function LoginPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    if (!email || !password) {
-      setError("Both fields are required.");
-      return;
-    }
-
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      setError("Please enter a valid email address.");
-      return;
-    }
-
-    setError("");
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      dispatch(loginStart());
 
-      if (rememberMe) {
-        localStorage.setItem("rememberedEmail", email);
-      } else {
-        localStorage.removeItem("rememberedEmail");
+      if (!email || !password) {
+        dispatch(loginFailure("Both fields are required"));
+        return;
       }
 
-      navigate("/otp-verification", { state: { from: "login", email } });
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        dispatch(loginFailure("Please enter a valid email address."));
+        return;
+      }
+      const response = await axios.post(`${SERVER_URI}/login`, {
+        email,
+        password,
+      });
+      if (response.status != 200) {
+        dispatch(loginFailure(response.data.error));
+        return;
+      }
+      dispatch(loginSuccess(response.data));
+      if (currentUser?.role === "admin") {
+        navigate("/admin");
+      } else {
+        navigate("/dashboard");
+      }
     } catch (err) {
-      setError("An error occurred. Please try again.");
+      dispatch(loginFailure(err.message));
       console.error("Login error:", err);
     }
   };
@@ -131,14 +137,15 @@ export default function LoginPage() {
 
             <button
               type="submit"
-              className="btn-gradient text-black rounded-full w-full px-4 py-3 font-bold transition-colors"
+              disabled={loading}
+              className="btn-gradient text-black rounded-full w-full px-4 py-3 font-bold transition-colors hover:brightness-110 disabled:opacity-70"
             >
-              Sign in
+              {loading ? "Signing In ..." : "Sign In"}
             </button>
           </form>
 
           <p className="mt-6 text-center text-sm text-zinc-400">
-            Don’t have an account?{" "}
+            Don't have an account?{" "}
             <Link
               to={"/sign-up"}
               className="text-yellow-500 font-medium underline"

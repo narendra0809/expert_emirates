@@ -17,7 +17,7 @@ export default function PricingCard({ plan }) {
 
   return (
     <div
-      className="group  bg-[#121117] w-full min-h-[500px] max-w-[400px] md:max-w-[420px] xl:max-w-[450px]
+      className="group  bg-[#121117] min-h-[500px] w-full max-w-[400px] md:max-w-[420px] xl:max-w-[450px]
     border border-black hover:border-yellow-500 rounded-2xl 
     p-6 sm:p-7 md:p-8 shadow-lg flex flex-col justify-between transition-all duration-300"
     >

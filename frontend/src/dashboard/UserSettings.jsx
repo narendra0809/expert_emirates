@@ -65,58 +65,59 @@ export default function UserSettings() {
   };
 
   return (
-    <main className="w-full sm:px-5 md:px-8 py-4">
+    <main className="flex flex-col px-[60px] gap-10">
+      <h4 className="pl-2 justify-start text-white text-2xl font-bold font-['DM_Sans'] leading-9">
+        Setting
+      </h4>
       {/* Tabs */}
-      <div className="bg-black rounded-xl py-3 mb-6">
-        <div className="flex items-center">
-          {tabs.map((tab) => (
-            <button
-              key={tab.label}
-              onClick={() => setActiveTab(tab.label)}
-              className={`relative flex items-center gap-2 py-2 px-2 font-bold whitespace-nowrap rounded-full transition-all duration-300 text-sm sm:text-base ${
-                activeTab === tab.label
-                  ? "bg-clip-text text-transparent bg-[linear-gradient(180deg,_#281000_5.95%,_#C0971C_29.93%,_#FFE976_52.51%,_#C0971C_76.02%,_#281000_100%)]"
-                  : "text-gray-400 hover:text-white"
-              }`}
-            >
-              {tab.label === "General" ? (
-                activeTab === tab.label ? (
-                  <img
-                    src={generalActiveIcon}
-                    alt={tab.label}
-                    className="w-6 h-6"
-                  />
-                ) : (
-                  <img src={generalIcon} alt={tab.label} />
-                )
-              ) : tab.label === "Social links" ? (
-                activeTab === tab.label ? (
-                  <img
-                    src={shareActiveIcon}
-                    alt={tab.label}
-                    className="w-6 h-6"
-                  />
-                ) : (
-                  <img src={shareIcon} alt={tab.label} className="text-xl" />
-                )
-              ) : activeTab === tab.label ? (
+      <div className="flex items-center">
+        {tabs.map((tab) => (
+          <button
+            key={tab.label}
+            onClick={() => setActiveTab(tab.label)}
+            className={`relative flex items-center gap-2 py-2 px-2 font-bold whitespace-nowrap rounded-full transition-all duration-300 text-sm sm:text-base ${
+              activeTab === tab.label
+                ? "bg-clip-text text-transparent bg-[linear-gradient(180deg,_#281000_5.95%,_#C0971C_29.93%,_#FFE976_52.51%,_#C0971C_76.02%,_#281000_100%)]"
+                : "text-gray-400 hover:text-white"
+            }`}
+          >
+            {tab.label === "General" ? (
+              activeTab === tab.label ? (
                 <img
-                  src={securityActiveIcon}
+                  src={generalActiveIcon}
                   alt={tab.label}
-                  className="w-4 h-4"
+                  className="w-6 h-6"
                 />
               ) : (
-                <img src={securityIcon} alt={tab.label} className="w-4 h-4" />
-              )}
-              <span>{tab.label}</span>
-            </button>
-          ))}
-        </div>
+                <img src={generalIcon} alt={tab.label} />
+              )
+            ) : tab.label === "Social links" ? (
+              activeTab === tab.label ? (
+                <img
+                  src={shareActiveIcon}
+                  alt={tab.label}
+                  className="w-6 h-6"
+                />
+              ) : (
+                <img src={shareIcon} alt={tab.label} className="text-xl" />
+              )
+            ) : activeTab === tab.label ? (
+              <img
+                src={securityActiveIcon}
+                alt={tab.label}
+                className="w-4 h-4"
+              />
+            ) : (
+              <img src={securityIcon} alt={tab.label} className="w-4 h-4" />
+            )}
+            <span>{tab.label}</span>
+          </button>
+        ))}
       </div>
 
       {/* GENERAL TAB */}
       {activeTab === "General" && (
-        <div className="w-full p-4 sm:p-6 rounded-xl bg-black">
+        <div className="w-full rounded-xl bg-black">
           <div className="flex flex-col lg:flex-row gap-4 md:gap-6 lg:gap-8">
             {/* Avatar Card */}
             <div className="w-full lg:w-[32%] text-center bg-[#121117] p-4 rounded-xl border border-[#29272e]">
@@ -201,7 +202,7 @@ export default function UserSettings() {
 
       {/* SOCIAL LINKS TAB */}
       {activeTab === "Social links" && (
-        <div className="w-full bg-[#121117] p-4 sm:p-6 rounded-xl border border-[#29272e] space-y-4">
+        <div className="w-full bg-[#121117] rounded-xl border border-[#29272e] space-y-4">
           {["facebook", "instagram", "linkedin", "twitter"].map((name) => {
             const iconMap = {
               facebook: <FaFacebookF className="text-blue-500" />,
@@ -213,7 +214,7 @@ export default function UserSettings() {
             return (
               <div
                 key={name}
-                className="flex flex-col sm:flex-row items-center bg-[#0F0E13] px-4 py-3 rounded-md border border-[#1e1e23] gap-3"
+                className="flex flex-col sm:flex-row items-center bg-[#0F0E13] px-3 py-3 rounded-md border border-[#1e1e23] gap-3"
               >
                 <div className="text-xl">{iconMap[name]}</div>
                 <input
@@ -232,7 +233,7 @@ export default function UserSettings() {
 
       {/* SECURITY TAB */}
       {activeTab === "Security" && (
-        <div className="w-full bg-[#121117] text-white p-4 sm:p-6 rounded-2xl shadow-md space-y-6">
+        <div className="w-full bg-[#121117] text-white rounded-2xl shadow-md space-y-6">
           <input
             type="password"
             placeholder="Old password"

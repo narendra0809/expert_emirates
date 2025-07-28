@@ -24,28 +24,28 @@ import WelcomePopup from "../components/WelocmePage";
 const HomePage = () => {
   return (
     <div className="bg-dark text-white font-sans">
-      <WelcomePopup/>
+      <WelcomePopup />
       <HeroSection />
       <SecondHero />
       <MarketSection />
-      <ButtonTabs/>
+      <ButtonTabs />
       {/* <ForexSection/> */}
-    {/* <StockMarcketChart/> */}
+      {/* <StockMarcketChart/> */}
       {/* <CurrencyMarket/> */}
       {/* <ScrollingCards/> */}
       {/* <TrustSection /> */}
       {/* <PricingSection /> */}
-      <BrochureSection/>
+      <BrochureSection />
       <MobileTradingSection />
-      <WhyExpertSection/>
-      <InsightSection/>
-      <ExpertMotion/>
-      <WorldMapLabels/>
-      <StatsCards/>
-      <AwardsSection/>
-      <TradersFeedbackSection/>
-      <Reviews/>
-      <FeatureSection/>
+      <WhyExpertSection />
+      <InsightSection />
+      <ExpertMotion />
+      <WorldMapLabels />
+      <StatsCards />
+      <AwardsSection />
+      <TradersFeedbackSection />
+      <Reviews />
+      <FeatureSection />
     </div>
   );
 };

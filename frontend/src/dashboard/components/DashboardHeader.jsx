@@ -2,7 +2,8 @@ import { useState, useEffect, useRef } from "react";
 import { FiBell, FiSettings, FiMenu, FiSearch, FiX } from "react-icons/fi";
 import { Link, useNavigate } from "react-router-dom";
 import profilePic from "../../assets/dashboard/stack.png";
-
+import { useDispatch, useSelector } from "react-redux";
+import { logout } from "../../features/user/userSlice";
 export default function DashboardHeader({ onMenuClick }) {
   const [showSearch, setShowSearch] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
@@ -10,7 +11,8 @@ export default function DashboardHeader({ onMenuClick }) {
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
   const navigate = useNavigate();
-
+  const { currentUser } = useSelector((state) => state.user);
+  const dispatch = useDispatch();
   // Close dropdown when clicked outside
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -23,7 +25,7 @@ export default function DashboardHeader({ onMenuClick }) {
   }, []);
 
   const handleLogout = () => {
-    localStorage.clear();
+    dispatch(logout());
     navigate("/login");
   };
 
@@ -111,9 +113,9 @@ export default function DashboardHeader({ onMenuClick }) {
               {profileDropdownOpen && (
                 <div className="absolute right-0 mt-2 w-48 bg-white text-black rounded-md shadow-lg z-50">
                   <div className="px-4 py-2 border-b text-sm font-medium">
-                    👤 user
+                    👤 {currentUser.name}
                     <p className="text-xs text-gray-500 truncate">
-                      user@example.com
+                      {currentUser.email}
                     </p>
                   </div>
                   <button

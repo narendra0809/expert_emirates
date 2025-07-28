@@ -34,23 +34,12 @@ class AuthController extends Controller
         'password.confirmed' => 'Passwords do not match.',
     ]);
 
-    $otp = rand(100000, 999999);
     $user = User::create([
         'name' => $request->name,
         'email' => $request->email,
         'password' => Hash::make($request->password),
-        'otp' => Hash::make($otp), // Hash OTP for security
-        'otp_expires_at' => now()->addMinutes(10),
     ]);
-
-    try {
-        Mail::to($user->email)->send(new OtpMail($otp)); // Queue email for performance
-        return response()->json(['message' => 'OTP sent to email.', 'user' => $user], 201);
-    } catch (\Exception $e) {
-        // Rollback user creation if email fails
-        $user->delete();
-        throw ValidationException::withMessages(['email' => 'Failed to send OTP.']);
-    }
+    return response()->json(['user' => $user],201);
 }
 
     public function login(Request $request)
@@ -72,7 +61,7 @@ class AuthController extends Controller
 
         $token = $user->createToken('auth_token')->plainTextToken;
 
-        return response()->json(['token' => $token, 'user' => $user]);
+        return response()->json(['token' => $token, 'user' => $user],200);
     }
 
    public function forgotPassword(Request $request)
