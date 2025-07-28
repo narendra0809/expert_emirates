@@ -8,6 +8,7 @@ use App\Models\Transaction;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Response;
 
 class PlanController extends Controller
@@ -29,7 +30,8 @@ public function myPlans()
   public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'name' => 'required|string|max:255|unique:plans',
+            'category' => 'required|string|max:255|unique:plans',
+            'type' => 'required|string|max:255',
             'description' => 'required|string',
             'price' => 'required|integer',
             'duration' => 'required|string',
@@ -47,8 +49,9 @@ public function myPlans()
 public function update(Request $request, Plan $plan)
     {
         $validator = Validator::make($request->all(), [
-            'name' => 'sometimes|string|max:255|unique:plans,name,' . $plan->id,
+            'category' => 'sometimes|string|max:255|unique:plans,category,' . $plan->id,
             'description' => 'sometimes|string',
+            'type' => 'required|string|max:255',
             'price' => 'sometimes|integer',
             'duration' => 'sometimes|string',
             'features' => 'sometimes|json',
@@ -88,5 +91,5 @@ public function update(Request $request, Plan $plan)
         return response()->json(['message' => 'Plan purchase initiated', 'transaction' => $transaction], 201);
     }
 
-    
+
 }

@@ -1,5 +1,5 @@
 import axios from "axios";
-import store from "./store";
+import { store } from "../redux/store";
 import { SERVER_URI } from "../constants/index.d";
 
 const api = axios.create({

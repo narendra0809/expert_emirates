@@ -1,73 +1,95 @@
-import { useState } from "react";
-import { FaFilter, FaRegEdit } from "react-icons/fa";
+import { useEffect, useState } from "react";
+import { FaEdit, FaFilter, FaRegEdit, FaSave, FaTrash } from "react-icons/fa";
+import api from "../../axios/api";
+import Loader from "../../components/Loader";
 
 export default function AddPlan() {
-  const [selectedPlan, setSelectedPlan] = useState("Evaluation");
-  const [planAmount, setPlanAmount] = useState(150);
-  const [planTime, setPlanTime] = useState("Monthly");
-  const [content, setContent] = useState(
-    "Perfect for small teams or unlimited evaluation."
-  );
-  const [features, setFeatures] = useState([
-    "Perfect for small teams or unlimited evaluation.",
-    "Perfect for small teams or unlimited evaluation.",
-    "Perfect for small teams or unlimited evaluation.",
-  ]);
-  const [paymentMethod, setPaymentMethod] = useState("");
-  const [plans, setPlans] = useState([
-    {
-      type: "Standard Plan",
-      price: 199,
-      duration: "MONTHLY",
-      category: "Forex",
-    },
-    {
-      type: "Standard Plan",
-      price: 199,
-      duration: "MONTHLY",
-      category: "Forex",
-    },
-    {
-      type: "Standard Plan",
-      price: 199,
-      duration: "MONTHLY",
-      category: "Forex",
-    },
-    {
-      type: "Standard Plan",
-      price: 199,
-      duration: "MONTHLY",
-      category: "Forex",
-    },
-  ]);
+  const [formData, setFormData] = useState({
+    category: "Forex",
+    type: "Standard Plan",
+    description: "",
+    price: "",
+    duration: "Monthly",
+  });
+  const [plans, setPlans] = useState([]);
+  const [loadingPlans, setLoadingPlans] = useState(false);
 
-  const handleFeatureChange = (index, value) => {
-    const newFeatures = [...features];
-    newFeatures[index] = value;
-    setFeatures(newFeatures);
-  };
-
-  const addFeature = () => {
-    setFeatures([...features, ""]);
-  };
-
-  const handleSaveChanges = () => {
-    const payload = {
-      selectedPlan,
-      planAmount,
-      planTime,
-      content,
-      features,
-      paymentMethod,
-    };
-    console.log("Saving Plan:", payload);
-  };
+  const [features, setFeatures] = useState([]);
 
   const deletePlan = (index) => {
     const updated = plans.filter((_, i) => i !== index);
     setPlans(updated);
   };
+  const handleSaveChanges = async () => {
+    console.log({
+      ...formData,
+      features: features.map((feature) => feature.value),
+    });
+    const planData = {
+      ...formData,
+      price: Number(formData.price),
+      features: JSON.stringify(features.map((feature) => feature.value)),
+    };
+    try {
+      const response = await api.post(`/admin/plans`, planData);
+      console.log(response.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
+  const handleChange = (e) => {
+    console.log(e.target.name);
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+  const handleAddFeature = () => {
+    setFeatures([
+      ...features,
+      {
+        id: Date.now(),
+        value: "",
+        isEditing: true, // Changed from 'editing' to 'isEditing' for consistency
+      },
+    ]);
+  };
+
+  const handleFeatureChange = (id, newValue) => {
+    setFeatures(
+      features.map((f) => (f.id === id ? { ...f, value: newValue } : f))
+    );
+  };
+
+  const handleSaveFeature = (id) => {
+    setFeatures(
+      features.map((f) => (f.id === id ? { ...f, isEditing: false } : f))
+    );
+  };
+
+  const handleEditFeature = (id) => {
+    setFeatures(
+      features.map((f) => (f.id === id ? { ...f, isEditing: true } : f))
+    );
+  };
+
+  const handleDeleteFeature = (id) => {
+    setFeatures(features.filter((f) => f.id !== id));
+  };
+
+  const fetchAllPlans = async () => {
+    try {
+      setLoadingPlans(true);
+      const response = await api.get("/admin/plans");
+      console.log(response.data);
+      setPlans(response.data);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoadingPlans(false);
+    }
+  };
+  useEffect(() => {
+    fetchAllPlans();
+  }, []);
   return (
     <div className="mt-5  bg-black text-white flex flex-col lg:flex-row gap-6">
       {/* Add Plan Section */}
@@ -82,13 +104,36 @@ export default function AddPlan() {
               Select Plan
             </label>
             <select
-              value={selectedPlan}
-              onChange={(e) => setSelectedPlan(e.target.value)}
-              className="w-full px-4 py-2 mt-1 bg-transparent text-[#454545] border border-[#2c2c2e] rounded-md focus:outline-none"
+              value={formData.type}
+              name="type"
+              onChange={handleChange}
+              className="w-full px-4 py-2 mt-1 bg-transparent text-gray-200 border border-[#2c2c2e] rounded-md focus:outline-none"
             >
-              <option>Evaluation</option>
-              <option>Standard</option>
-              <option>Premium</option>
+              <option className="bg-[#121117] text-gray-200">
+                Standard Plan
+              </option>
+              <option className="bg-[#121117] text-gray-200">Pro Plan</option>
+              <option className="bg-[#121117] text-gray-200">Ultra Plan</option>
+            </select>
+          </div>
+          <div className="relative mb-4">
+            <label className="absolute -top-2 left-3 px-1 text-xs bg-[#121117] text-[#637381]">
+              Select Category
+            </label>
+            <select
+              value={formData.category}
+              name="category"
+              onChange={handleChange}
+              className="w-full px-4 py-2 mt-1 bg-transparent text-gray-200 border border-[#2c2c2e] rounded-md focus:outline-none"
+            >
+              <option className="bg-[#121117] text-gray-200">Forex</option>
+              <option className="bg-[#121117] text-gray-200">Gold</option>
+              <option className="bg-[#121117] text-gray-200">
+                Crypto Currency
+              </option>
+              <option className="bg-[#121117] text-gray-200">
+                Portfolio Managment
+              </option>
             </select>
           </div>
 
@@ -99,14 +144,19 @@ export default function AddPlan() {
                 Plan Time
               </label>
               <select
-                value={planTime}
-                onChange={(e) => setPlanTime(e.target.value)}
-                className="w-full px-4 py-2 mt-1 bg-transparent text-[#454545] border border-[#2c2c2e] rounded-md focus:outline-none"
+                name="duration"
+                value={formData.duration}
+                onChange={handleChange}
+                className="w-full px-4 py-2 mt-1 bg-transparent text-gray-200 border border-[#2c2c2e] rounded-md focus:outline-none"
               >
-                <option>Monthly</option>
-                <option>Quartarly</option>
-                <option>Half Yearly</option>
-                <option>Yearly</option>
+                <option className="bg-[#121117] text-gray-200">Monthly</option>
+                <option className="bg-[#121117] text-gray-200">
+                  Quartarly
+                </option>
+                <option className="bg-[#121117] text-gray-200">
+                  Half Yearly
+                </option>
+                <option className="bg-[#121117] text-gray-200">Yearly</option>
               </select>
             </div>
 
@@ -114,14 +164,16 @@ export default function AddPlan() {
               <label className="absolute -top-2 left-3 px-1 text-xs bg-[#121117] text-[#637381]">
                 Plan Amount
               </label>
-              <input
-                type="text"
-                value={`(Exp: $ ${planAmount})`}
-                onChange={(e) =>
-                  setPlanAmount(Number(e.target.value.replace(/[^\d]/g, "")))
-                }
-                className="w-full px-4 py-2 mt-1 bg-transparent text-[#454545] border border-[#2c2c2e] rounded-md focus:outline-none"
-              />
+              <div className="flex items-center relative">
+                <span className="absolute left-3 bottom-[10px]">$</span>
+                <input
+                  name="price"
+                  value={formData.price}
+                  onChange={handleChange}
+                  type="text"
+                  className="w-full px-6 py-2 mt-1 bg-transparent text-gray-200 border border-[#2c2c2e] rounded-md focus:outline-none"
+                />
+              </div>
             </div>
           </div>
 
@@ -131,10 +183,11 @@ export default function AddPlan() {
               Description
             </label>
             <input
+              name="description"
+              value={formData.description}
+              onChange={handleChange}
               type="text"
-              value={content}
-              onChange={(e) => setContent(e.target.value)}
-              className="w-full px-4 py-2 mt-1 bg-transparent text-[#454545] border border-[#2c2c2e] rounded-md focus:outline-none"
+              className="w-full px-4 py-2 mt-1 bg-transparent text-gray-200 border border-[#2c2c2e] rounded-md focus:outline-none"
             />
           </div>
 
@@ -145,7 +198,7 @@ export default function AddPlan() {
               <span className="text-red-500">*</span>
             </span>
             <button
-              onClick={addFeature}
+              onClick={handleAddFeature}
               className="px-3 py-1 bg-transparent border border-gray-600 text-white rounded-full text-sm hover:bg-yellow-400 hover:text-black transition h-8"
             >
               + Add Features
@@ -154,14 +207,51 @@ export default function AddPlan() {
 
           {/* FEATURES LIST */}
           <div className="space-y-2 mb-6">
-            {features.map((feature, index) => (
-              <input
-                key={index}
-                type="text"
-                placeholder={feature}
-                onChange={(e) => handleFeatureChange(index, e.target.value)}
-                className="w-full px-4 py-2 bg-transparent text-[#454545] border border-[#2c2c2e] rounded-md focus:outline-none"
-              />
+            {features.map((feature) => (
+              <div key={feature.id} className="flex items-center gap-2">
+                <input
+                  type="text"
+                  value={feature.value}
+                  onChange={(e) =>
+                    handleFeatureChange(feature.id, e.target.value)
+                  }
+                  className={`flex-1 px-4 py-2 bg-transparent border rounded-md focus:outline-none ${
+                    feature.isEditing
+                      ? "text-white border-yellow-500"
+                      : "text-gray-400 border-gray-700 bg-gray-800 cursor-not-allowed"
+                  }`}
+                  readOnly={!feature.isEditing}
+                />
+
+                {/* Save Button - Only shows when editing */}
+                {feature.isEditing && (
+                  <button
+                    onClick={() => handleSaveFeature(feature.id)}
+                    className="p-2 bg-green-500 text-white rounded hover:bg-green-600"
+                    disabled={!feature.value.trim()} // Disable if empty
+                  >
+                    <FaSave />
+                  </button>
+                )}
+
+                {/* Edit Button - Only shows when not editing */}
+                {!feature.isEditing && (
+                  <button
+                    onClick={() => handleEditFeature(feature.id)}
+                    className="p-2 bg-yellow-500 text-black rounded hover:bg-yellow-600"
+                  >
+                    <FaEdit />
+                  </button>
+                )}
+
+                {/* Delete Button - Always shows */}
+                <button
+                  onClick={() => handleDeleteFeature(feature.id)}
+                  className="p-2 bg-red-500 text-white rounded hover:bg-red-600"
+                >
+                  <FaTrash />
+                </button>
+              </div>
             ))}
           </div>
 
@@ -189,35 +279,39 @@ export default function AddPlan() {
           </button>
         </div>
 
-        <div className="space-y-4 max-h-[550px] overflow-y-auto pr-2">
-          {plans.map((plan, index) => (
-            <div
-              key={index}
-              className="bg-[#1d1b25] border border-gray-800 p-4 rounded-md flex justify-between items-center"
-            >
-              <div>
-                <p className="text-sm text-gray-400">{plan.type}</p>
-                <p className="text-xl font-bold">
-                  ${plan.price}
-                  <span className="text-sm ml-1 font-medium">
-                    /{plan.duration}
-                  </span>
-                </p>
-                <p className="text-xs text-gray-500">{plan.category}</p>
+        <div className="w-full h-full space-y-4 max-h-[550px] pr-2">
+          {loadingPlans ? (
+            <Loader />
+          ) : (
+            plans.map((plan, index) => (
+              <div
+                key={index}
+                className="bg-[#1d1b25] border border-gray-800 p-4 rounded-md flex justify-between items-center"
+              >
+                <div>
+                  <p className="text-sm text-gray-400">{plan.type}</p>
+                  <p className="text-xl font-bold">
+                    ${plan.price}
+                    <span className="text-sm ml-1 font-medium">
+                      /{plan.duration}
+                    </span>
+                  </p>
+                  <p className="text-xs text-gray-500">{plan.category}</p>
+                </div>
+                <div className="flex gap-2">
+                  <button className="text-black p-2 rounded-full bg-gradient-to-b from-[#281000] via-[#C0971C] to-[#FFE976] hover:brightness-110 transition">
+                    <FaRegEdit size={20} />
+                  </button>
+                  <button
+                    onClick={() => deletePlan(index)}
+                    className="border border-yellow-600 bg-transparent text-yellow-400 px-5 py-1 rounded-full hover:bg-gradient-to-b hover:from-[#281000] hover:via-[#C0971C] hover:to-[#FFE976] hover:text-black"
+                  >
+                    Delete
+                  </button>
+                </div>
               </div>
-              <div className="flex gap-2">
-                <button className="text-black p-2 rounded-full bg-gradient-to-b from-[#281000] via-[#C0971C] to-[#FFE976] hover:brightness-110 transition">
-                  <FaRegEdit size={20} />
-                </button>
-                <button
-                  onClick={() => deletePlan(index)}
-                  className="border border-yellow-600 bg-transparent text-yellow-400 px-5 py-1 rounded-full hover:bg-gradient-to-b hover:from-[#281000] hover:via-[#C0971C] hover:to-[#FFE976] hover:text-black"
-                >
-                  Delete
-                </button>
-              </div>
-            </div>
-          ))}
+            ))
+          )}
         </div>
       </div>
     </div>
