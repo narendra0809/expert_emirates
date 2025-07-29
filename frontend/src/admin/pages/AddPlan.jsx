@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { FaEdit, FaFilter, FaRegEdit, FaSave, FaTrash } from "react-icons/fa";
 import api from "../../axios/api";
 import Loader from "../../components/Loader";
-
+import toast from "react-hot-toast";
 export default function AddPlan() {
   const [formData, setFormData] = useState({
     category: "Forex",
@@ -13,28 +13,124 @@ export default function AddPlan() {
   });
   const [plans, setPlans] = useState([]);
   const [loadingPlans, setLoadingPlans] = useState(false);
+  const [deletingPlan, setDeletingPlan] = useState({
+    value: false,
+    id: null,
+  });
+  const [savingChanges, setSavingChanges] = useState(false);
 
   const [features, setFeatures] = useState([]);
+  const [isEditing, setIsEditing] = useState({
+    value: false,
+    id: null,
+  });
 
-  const deletePlan = (index) => {
-    const updated = plans.filter((_, i) => i !== index);
-    setPlans(updated);
+  const handleEditPlan = (planId) => {
+    const editingPlan = plans.find((plan) => plan.id === planId);
+    if (!editingPlan) {
+      toast.error("Unable to edit plan. Please try again", {
+        duration: 3000,
+      });
+      setIsEditing({
+        value: false,
+        id: null,
+      });
+      return;
+    }
+    setFormData({
+      category: editingPlan.category,
+      description: editingPlan.description,
+      duration: editingPlan.duration,
+      price: editingPlan.price,
+      type: editingPlan.type,
+    });
+    setFeatures(
+      editingPlan.features.map((feature) => ({
+        id: Date.now(),
+        value: feature,
+        isEditing: false,
+      }))
+    );
+    setIsEditing({
+      value: true,
+      id: planId,
+    });
+  };
+  const deletePlan = async (planId) => {
+    try {
+      setDeletingPlan({ value: true, id: planId });
+      const response = await api.delete(`/admin/plans/${planId}`);
+      if (response.status === 200) {
+        toast.success("Plan deleted successfully", {
+          duration: 3000,
+        });
+        fetchAllPlans();
+        return;
+      }
+      throw new Error("Unable to delete plan. Please try again later");
+    } catch (error) {
+      console.log(error);
+      toast.error(error.message, {
+        duration: 3000,
+      });
+    } finally {
+      setDeletingPlan({ value: false, id: null });
+    }
   };
   const handleSaveChanges = async () => {
-    console.log({
-      ...formData,
-      features: features.map((feature) => feature.value),
-    });
     const planData = {
       ...formData,
       price: Number(formData.price),
       features: JSON.stringify(features.map((feature) => feature.value)),
     };
+    setSavingChanges(true);
+    if (isEditing.value) {
+      await editPlan(planData);
+    } else {
+      await addNewPlan(planData);
+    }
+    setSavingChanges(false);
+  };
+
+  const addNewPlan = async (planData) => {
     try {
       const response = await api.post(`/admin/plans`, planData);
-      console.log(response.data);
+      if (response.status === 201) {
+        toast.success("Plan added successfully", {
+          duration: 3000,
+        });
+        fetchAllPlans();
+        return;
+      }
+      throw new Error("Failed to add plan. Please try again");
+    } catch (error) {
+      console.log(error.response.data.errors);
+      toast.error(error.message, {
+        duration: 3000,
+      });
+    }
+  };
+  const editPlan = async (planData) => {
+    try {
+      const response = await api.patch(
+        `/admin/plans/${isEditing.id}`,
+        planData
+      );
+      if (response.status === 200) {
+        toast.success("Plan edited successfully", {
+          duration: 3000,
+        });
+        fetchAllPlans();
+        return;
+      }
+      throw new Error("Unable to edit plan. Please try again");
     } catch (error) {
       console.log(error);
+      toast.error(error.message, {
+        duration: 3000,
+      });
+    } finally {
+      setIsEditing({ value: false, id: null });
     }
   };
 
@@ -48,7 +144,7 @@ export default function AddPlan() {
       {
         id: Date.now(),
         value: "",
-        isEditing: true, // Changed from 'editing' to 'isEditing' for consistency
+        isEditing: true,
       },
     ]);
   };
@@ -79,10 +175,19 @@ export default function AddPlan() {
     try {
       setLoadingPlans(true);
       const response = await api.get("/admin/plans");
-      console.log(response.data);
-      setPlans(response.data);
+      if (response.status !== 200) {
+        throw new Error("Unable to fetch plans. Please try again");
+      }
+      const parsedPlans = response.data.map((plan) => ({
+        ...plan,
+        features: JSON.parse(plan.features),
+      }));
+      setPlans(parsedPlans);
     } catch (error) {
       console.log(error);
+      toast.error(error.message, {
+        duration: 3000,
+      });
     } finally {
       setLoadingPlans(false);
     }
@@ -95,7 +200,7 @@ export default function AddPlan() {
       {/* Add Plan Section */}
       <div className="w-full lg:w-1/2 bg-[#121117] p-6 rounded-xl shadow-md">
         <h1 className="text-xl sm:text-2xl font-bold bg-gradient-to-b from-[#281000] via-[#C0971C] to-[#FFE976] bg-clip-text text-transparent mb-6 tracking-wider">
-          ADD PLAN
+          {isEditing.value ? "EDIT PLAN" : "ADD PLAN"}
         </h1>
         <div className="border border-[#1D1B25] p-6 rounded-xl">
           {/* SELECT PLAN - big width */}
@@ -257,12 +362,19 @@ export default function AddPlan() {
 
           {/* SAVE BUTTON - small and left aligned */}
           {/* Save Changes Button - No extra padding */}
-          <div className="rounded-full bg-[linear-gradient(90deg,#281000_0%,#C0971C_25.5%,#FFE976_49.5%,#C0971C_74.5%,#281000_100%)] shadow-[0_0_17px_rgba(254,214,0,0.2)] w-fit">
+          <div className="rounded-full w-fit bg-black">
             <button
               onClick={handleSaveChanges}
-              className="h-[38px] px-6 py-[6px] rounded-full text-sm font-bold text-black bg-[linear-gradient(90deg,#281000_0%,#C0971C_25.5%,#FFE976_49.5%,#C0971C_74.5%,#281000_100%)] hover:bg-black hover:text-white transition duration-300"
+              disabled={savingChanges}
+              className={`h-[38px] border border-yellow-600 ${
+                savingChanges ? "bg-[#121117]" : "text-gradient-2"
+              } px-6 py-[6px] rounded-full text-sm font-bold text-black  hover:bg-black hover:text-white transition duration-300`}
             >
-              SAVE CHANGES
+              {savingChanges ? (
+                <Loader width={20} height={20} />
+              ) : (
+                "SAVE CHANGES"
+              )}
             </button>
           </div>
         </div>
@@ -281,11 +393,15 @@ export default function AddPlan() {
 
         <div className="w-full h-full space-y-4 max-h-[550px] pr-2">
           {loadingPlans ? (
-            <Loader />
+            <Loader width={50} height={50} />
+          ) : plans.length === 0 ? (
+            <p className="text-xl text-gray-400 flex items-center justify-center w-full h-full min-h-full">
+              You didn't add any plans yet
+            </p>
           ) : (
-            plans.map((plan, index) => (
+            plans.map((plan) => (
               <div
-                key={index}
+                key={plan.id}
                 className="bg-[#1d1b25] border border-gray-800 p-4 rounded-md flex justify-between items-center"
               >
                 <div>
@@ -299,14 +415,34 @@ export default function AddPlan() {
                   <p className="text-xs text-gray-500">{plan.category}</p>
                 </div>
                 <div className="flex gap-2">
-                  <button className="text-black p-2 rounded-full bg-gradient-to-b from-[#281000] via-[#C0971C] to-[#FFE976] hover:brightness-110 transition">
+                  <button
+                    onClick={() => handleEditPlan(plan.id)}
+                    className="text-black p-2 rounded-full bg-gradient-to-b from-[#281000] via-[#C0971C] to-[#FFE976] hover:brightness-110 transition"
+                  >
                     <FaRegEdit size={20} />
                   </button>
                   <button
-                    onClick={() => deletePlan(index)}
-                    className="border border-yellow-600 bg-transparent text-yellow-400 px-5 py-1 rounded-full hover:bg-gradient-to-b hover:from-[#281000] hover:via-[#C0971C] hover:to-[#FFE976] hover:text-black"
+                    onClick={() => deletePlan(plan.id)}
+                    disabled={deletingPlan.value && deletingPlan.id === plan.id}
+                    className={`disabled:opacity-85 border border-yellow-600 bg-transparent text-yellow-400 px-5 py-1 rounded-full hover:${
+                      !deletingPlan.value &&
+                      deletingPlan.id === plan.id &&
+                      "bg-gradient-to-b"
+                    } hover:from-[#281000] hover:${
+                      !deletingPlan.value &&
+                      deletingPlan.id === plan.id &&
+                      "via-[#C0971C]"
+                    } hover:${
+                      !deletingPlan.value &&
+                      deletingPlan.id === plan.id &&
+                      "to-[#FFE976]"
+                    } hover:text-black`}
                   >
-                    Delete
+                    {deletingPlan.value && plan.id === deletingPlan.id ? (
+                      <Loader width={20} height={20} />
+                    ) : (
+                      "Delete"
+                    )}
                   </button>
                 </div>
               </div>

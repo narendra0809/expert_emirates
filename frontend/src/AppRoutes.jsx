@@ -1,4 +1,5 @@
 import { lazy, Suspense } from "react";
+import { Toaster } from "react-hot-toast";
 import { Routes, Route, useLocation } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
@@ -16,6 +17,7 @@ import AddPlan from "./admin/pages/AddPlan";
 import Transaction from "./admin/pages/Transaction";
 import AdminSettings from "./admin/pages/AdminSettings";
 import CreatePost from "./admin/pages/CreatePost";
+import PaymentMethod from "./admin/pages/PaymentMethod";
 // import StatusByProcessChart from "./admindashboad/StatusByProcessChart";
 
 // Lazy-loaded components
@@ -65,6 +67,8 @@ export default function AppRoutes() {
     <>
       {!hideNavbarFooter && <Navbar />}
       <ScrollToTop />
+
+      <Toaster />
       <Suspense
         fallback={
           <div className="text-center text-white py-10">Loading...</div>
@@ -107,6 +111,7 @@ export default function AppRoutes() {
           <Route path="/admin" element={<AdminProtectedRoute />}>
             <Route index element={<AdminDashboard />} />
             <Route path="/admin/add-plan" element={<AddPlan />} />
+            <Route path="/admin/payment-gateway" element={<PaymentMethod />} />
             <Route path="/admin/transactions" element={<Transaction />} />
             <Route path="/admin/blog" element={<CreatePost />} />
             <Route path="/admin/setting" element={<AdminSettings />} />

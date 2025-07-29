@@ -30,7 +30,7 @@ public function myPlans()
   public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'category' => 'required|string|max:255|unique:plans',
+            'category' => 'required|string|max:255',
             'type' => 'required|string|max:255',
             'description' => 'required|string',
             'price' => 'required|integer',
@@ -49,7 +49,7 @@ public function myPlans()
 public function update(Request $request, Plan $plan)
     {
         $validator = Validator::make($request->all(), [
-            'category' => 'sometimes|string|max:255|unique:plans,category,' . $plan->id,
+            'category' => 'sometimes|string|max:255' . $plan->id,
             'description' => 'sometimes|string',
             'type' => 'required|string|max:255',
             'price' => 'sometimes|integer',
@@ -66,8 +66,12 @@ public function update(Request $request, Plan $plan)
     }
     public function destroy(Plan $plan)
     {
-        $plan->delete();
-        return response()->json(['message' => 'Plan deleted']);
+        try {
+            $plan->delete();
+            return response()->json(['message' => 'Plan deleted']);
+        } catch (\Throwable $th) {
+            return response()->json(["message"=> 'Plan could not be deleted']);
+        }
     }
 
     public function buy(Request $request)

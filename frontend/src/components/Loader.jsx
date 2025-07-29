@@ -1,10 +1,10 @@
-const Loader = () => {
+const Loader = ({ width, height }) => {
   return (
     <div className="flex items-center justify-center w-full h-full min-h-full">
       <div
         style={{
-          width: "50px",
-          height: "50px",
+          width: width,
+          height: height,
           border: "5px solid rgba(218, 165, 32, 0.3)",
           borderTop: "5px solid #daa520",
           borderRadius: "50%",

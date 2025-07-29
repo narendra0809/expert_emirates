@@ -58,6 +58,11 @@ export default function Sidebar({
       url: "/admin/add-plan",
     },
     {
+      icon: <FiPlus size={20} />,
+      label: "Add Payment",
+      url: "/admin/payment-gateway",
+    },
+    {
       icon: <FiRepeat size={20} />,
       label: "Transaction",
       url: "/admin/transactions",
