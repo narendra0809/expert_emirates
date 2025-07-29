@@ -1,4 +1,7 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
+import api from "../../axios/api";
+import toast from "react-hot-toast";
+import Loader from "../../components/Loader";
 
 // Icons
 const PencilIcon = ({ className, onClick }) => (
@@ -57,38 +60,20 @@ const PlusIcon = ({ className, onClick }) => (
 
 const PaymentMethod = () => {
   const [paymentMethods, setPaymentMethods] = useState([]);
-  const [editIndex, setEditIndex] = useState(null);
+  const [editMethodId, setEditMethodId] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
   const [methodToDelete, setMethodToDelete] = useState(null);
   const [formData, setFormData] = useState({
     name: "",
     wallet_address: "",
-    qr_code: null,
+    qr_code: File,
     qr_code_preview: "",
   });
-  const [isLoading, setIsLoading] = useState(true);
+  const [loadingPayments, setLoadingPayments] = useState(false);
 
-  // Fetch payment methods from API (simulated)
   useEffect(() => {
-    // Simulate API call
-    setTimeout(() => {
-      setPaymentMethods([
-        {
-          id: 1,
-          name: "Bitcoin",
-          wallet_address: "1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa",
-          qr_code: "/images/bitcoin-qr.png",
-        },
-        {
-          id: 2,
-          name: "Ethereum",
-          wallet_address: "0x71C7656EC7ab88b098defB751B7401B5f6d8976F",
-          qr_code: "/images/ethereum-qr.png",
-        },
-      ]);
-      setIsLoading(false);
-    }, 500);
+    fetchPaymentGateways();
   }, []);
 
   const handleInputChange = (e) => {
@@ -114,60 +99,130 @@ const PaymentMethod = () => {
       qr_code: null,
       qr_code_preview: "",
     });
-    setEditIndex(null);
+    setEditMethodId(null);
     setIsModalOpen(true);
   };
 
-  const openEditModal = (index) => {
-    const method = paymentMethods[index];
+  const openEditModal = (id) => {
+    const method = paymentMethods.find((method) => method.id == id);
     setFormData({
       name: method.name,
       wallet_address: method.wallet_address,
       qr_code: null,
       qr_code_preview: method.qr_code,
     });
-    setEditIndex(index);
+    setEditMethodId(id);
     setIsModalOpen(true);
   };
-
   const handleSubmit = () => {
-    if (editIndex !== null) {
-      const updatedMethods = [...paymentMethods];
-      updatedMethods[editIndex] = {
-        ...updatedMethods[editIndex],
-        name: formData.name,
-        wallet_address: formData.wallet_address,
-        qr_code: formData.qr_code_preview,
-      };
-      setPaymentMethods(updatedMethods);
+    const newMethod = new FormData();
+    newMethod.append("name", formData.name);
+    newMethod.append("wallet_address", formData.wallet_address);
+    newMethod.append("qr_code", formData.qr_code);
+    if (editMethodId !== null) {
+      editPaymentMethod(newMethod);
     } else {
-      const newMethod = {
-        id: paymentMethods.length + 1,
-        name: formData.name,
-        wallet_address: formData.wallet_address,
-        qr_code: formData.qr_code_preview,
-      };
-      setPaymentMethods([...paymentMethods, newMethod]);
+      addPaymentMethod(newMethod);
     }
     setIsModalOpen(false);
   };
+  const editPaymentMethod = async (method) => {
+    try {
+      if (method.get("qr_code") === "null") {
+        method.delete("qr_code");
+      }
+      const response = await api.patch(
+        `/admin/payment-gateways/${editMethodId}`,
+        method,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+      if (response.data.success) {
+        toast.success(response.data.message, {
+          duration: 3000,
+        });
+        fetchPaymentGateways();
+        return;
+      }
+      throw new Error("Unable to edit payment gateway. Please try again");
+    } catch (error) {
+      toast.error(error.message, {
+        duration: 3000,
+      });
+      console.log(error);
+    }
+  };
 
-  const confirmDelete = (index) => {
-    setMethodToDelete(index);
+  const addPaymentMethod = async (method) => {
+    try {
+      const response = await api.post("/admin/payment-gateways", method, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      if (response.data.success) {
+        toast.success(response.data.message, {
+          duration: 3000,
+        });
+        fetchPaymentGateways();
+        return;
+      }
+      throw new Error("Unable to add payment gateway. Please try again");
+    } catch (error) {
+      toast.error(error.message, {
+        duration: 3000,
+      });
+      console.log(error);
+    }
+  };
+  const fetchPaymentGateways = async () => {
+    setLoadingPayments(true);
+    try {
+      const response = await api.get("/admin/payment-gateways");
+      if (response.status != 200) {
+        throw new Error(response.statusText);
+      }
+      setPaymentMethods(response.data);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoadingPayments(false);
+    }
+  };
+  const confirmDelete = (id) => {
+    setMethodToDelete(id);
     setIsDeleteConfirmOpen(true);
   };
 
-  const handleDelete = () => {
-    const updatedMethods = paymentMethods.filter(
-      (_, i) => i !== methodToDelete
-    );
-    setPaymentMethods(updatedMethods);
-    setIsDeleteConfirmOpen(false);
+  const handleDelete = async () => {
+    try {
+      const response = await api.delete(
+        `/admin/payment-gateways/${methodToDelete}`
+      );
+      if (response.data.success) {
+        toast.success(response.data.message, {
+          duration: 3000,
+        });
+        fetchPaymentGateways();
+        return;
+      }
+      throw new Error("Unable to delete payment gateway");
+    } catch (error) {
+      toast.error(error.message, {
+        duration: 3000,
+      });
+      console.log(error);
+    } finally {
+      setIsDeleteConfirmOpen(false);
+    }
   };
 
   return (
-    <div className="h-full text-white p-4 sm:p-6 bg-[#121117] rounded-xl">
-      <div className="w-full mx-auto">
+    <div className="h-full w-full text-white p-4 sm:p-6 bg-[#121117] rounded-xl">
+      <div className="w-full h-full mx-auto">
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-2xl font-semibold gradient-text">
             Payment Methods
@@ -181,10 +236,8 @@ const PaymentMethod = () => {
           </button>
         </div>
 
-        {isLoading ? (
-          <div className="flex justify-center items-center h-64">
-            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
-          </div>
+        {loadingPayments ? (
+          <Loader width={50} height={50} />
         ) : paymentMethods.length === 0 ? (
           <div className="text-center py-12 text-gray-400">
             No payment methods found. Add your first payment method.
@@ -200,7 +253,7 @@ const PaymentMethod = () => {
             </div>
 
             {/* Rows */}
-            {paymentMethods.map((method, index) => (
+            {paymentMethods.map((method) => (
               <div
                 key={method.id}
                 className="grid grid-cols-12 items-center border-b border-gray-800 px-4 py-3 text-sm hover:bg-gray-900 transition-colors min-w-[800px]"
@@ -220,14 +273,14 @@ const PaymentMethod = () => {
                 </div>
                 <div className="col-span-2 flex justify-center gap-3">
                   <button
-                    onClick={() => openEditModal(index)}
+                    onClick={() => openEditModal(method.id)}
                     className="text-blue-400 hover:text-blue-300"
                     aria-label="Edit"
                   >
                     <PencilIcon className="w-5 h-5" />
                   </button>
                   <button
-                    onClick={() => confirmDelete(index)}
+                    onClick={() => confirmDelete(method.id)}
                     className="text-red-400 hover:text-red-300"
                     aria-label="Delete"
                   >
@@ -245,7 +298,7 @@ const PaymentMethod = () => {
         <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 px-4">
           <div className="bg-[#121117] p-6 rounded-md w-full max-w-md text-white shadow-lg">
             <h3 className="text-lg font-semibold mb-4">
-              {editIndex !== null
+              {editMethodId !== null
                 ? "Edit Payment Method"
                 : "Add Payment Method"}
             </h3>
@@ -311,7 +364,7 @@ const PaymentMethod = () => {
                 onClick={handleSubmit}
                 className="px-4 py-2 rounded-md bg-[#201f28] hover:bg-[#1a1922] text-sm"
               >
-                {editIndex !== null ? "Update" : "Save"}
+                {editMethodId !== null ? "Update" : "Save"}
               </button>
             </div>
           </div>
