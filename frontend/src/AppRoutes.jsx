@@ -18,6 +18,7 @@ import Transaction from "./admin/pages/Transaction";
 import AdminSettings from "./admin/pages/AdminSettings";
 import CreatePost from "./admin/pages/CreatePost";
 import PaymentMethod from "./admin/pages/PaymentMethod";
+import ViewPosts from "./admin/pages/ViewPosts";
 // import StatusByProcessChart from "./admindashboad/StatusByProcessChart";
 
 // Lazy-loaded components
@@ -114,6 +115,7 @@ export default function AppRoutes() {
             <Route path="/admin/payment-gateway" element={<PaymentMethod />} />
             <Route path="/admin/transactions" element={<Transaction />} />
             <Route path="/admin/blog" element={<CreatePost />} />
+            <Route path="/admin/blog/view" element={<ViewPosts />} />
             <Route path="/admin/setting" element={<AdminSettings />} />
           </Route>
         </Routes>

@@ -2,7 +2,7 @@ import { useState } from "react";
 import logoImage from "../assets/setting/image1.png";
 import faviconImage from "../assets/setting/logo.png";
 
-const UploadCard = ({ title, imgSrc, onUpload, onRemove }) => {
+const UploadCard = ({ title, imgSrc, name, onUpload, onRemove }) => {
   return (
     <div className="bg-[#121117] border border-[#1e1e25] rounded-xl p-4 w-full md:w-[48%] shadow-md">
       <div className="flex flex-col md:flex-row items-center gap-6">
@@ -20,7 +20,12 @@ const UploadCard = ({ title, imgSrc, onUpload, onRemove }) => {
           <div className="flex items-center justify-center md:justify-start gap-4">
             <label className="px-4 py-1.5 rounded-full text-sm font-semibold text-black cursor-pointer bg-gradient-to-l from-[#452e06] via-[#d1bf5a] to-[#452e06] hover:opacity-90">
               Upload
-              <input type="file" onChange={onUpload} className="hidden" />
+              <input
+                type="file"
+                name={name}
+                onChange={onUpload}
+                className="hidden"
+              />
             </label>
             <button
               onClick={onRemove}
@@ -38,26 +43,24 @@ const UploadCard = ({ title, imgSrc, onUpload, onRemove }) => {
 export default function LogoFaviconUpload() {
   const [logo, setLogo] = useState(logoImage);
   const [favicon, setFavicon] = useState(faviconImage);
-
+  const handleIconUplaod = (e) => {
+    const { name, files } = e.target;
+  };
   return (
     <div className="flex flex-col md:flex-row justify-between flex-wrap gap-6 md:gap-4">
       <UploadCard
         title="Logo Change"
         imgSrc={logo}
-        onUpload={(e) => {
-          const file = e.target.files[0];
-          if (file) setLogo(URL.createObjectURL(file));
-        }}
-        onRemove={() => setLogo("")}
+        name="logo"
+        onUpload={handleIconUplaod}
+        // onRemove={}
       />
       <UploadCard
         title="Favicon Change"
         imgSrc={favicon}
-        onUpload={(e) => {
-          const file = e.target.files[0];
-          if (file) setFavicon(URL.createObjectURL(file));
-        }}
-        onRemove={() => setFavicon("")}
+        name="favicon"
+        onUpload={handleIconUplaod}
+        // onRemove={() => setFavicon("")}
       />
     </div>
   );

@@ -69,8 +69,13 @@ export default function Sidebar({
     },
     {
       icon: <FiLayout size={20} />,
-      label: "Blog",
+      label: "Add Blog",
       url: "/admin/blog",
+    },
+    {
+      icon: <FiLayout size={20} />,
+      label: "View Blogs",
+      url: "/admin/blog/view",
     },
     {
       icon: <FiSettings size={20} />,

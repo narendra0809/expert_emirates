@@ -1,30 +1,56 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import uploadImage1 from "../assets/post/container.png";
 import mainChart from "../assets/post/mainChart.png";
+import { useNavigate } from "react-router-dom";
 import MetaPropertiesForm from "./MetaPropertiesForm";
+import toast from "react-hot-toast";
 import RichEditor from "../components/Editor";
+import api from "../../axios/api";
 export default function CreatePost() {
+  const mainImageRef = useRef(null);
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     title: "",
-    category: "",
+    category: "Forex Forecast",
     content: "",
     meta_title: "",
     meta_desc: "",
     meta_key: [],
-    blog_image: File,
-    blog_image_preview: "",
+    blog_image: null,
     is_published: "draft",
   });
 
   const handleChange = (e) => {
+    const { name, value, files } = e.target;
     setFormData({
       ...formData,
-      [e.target.name]:
-        e.target.name === "blog_image" ? e.target.files[0] : e.target.value,
+      [name]: name === "blog_image" ? files[0] : value,
     });
   };
-  console.log(formData);
-  const handleSubmit = () => {};
+  const handleSubmit = async () => {
+    try {
+      const response = await api.post(
+        "/admin/blogs",
+        {
+          ...formData,
+          meta_key: formData.meta_key,
+        },
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+      if (response.status !== 201) {
+        throw new Error("Unable to create post. Please try again");
+      }
+      toast.success("Post created successfully", { duration: 3000 });
+      navigate("/admin/blog/view");
+    } catch (error) {
+      toast.error(error.message, { duration: 3000 });
+      console.log(error);
+    }
+  };
 
   const handleEditorChange = (content) => {
     setFormData({ ...formData, content });
@@ -50,9 +76,9 @@ export default function CreatePost() {
             onChange={handleChange}
             className="w-full bg-[#0f0e13] text-[#919EAB] p-2 border border-gray-600 rounded"
           >
-            <option value="">Forex Forecast</option>
-            <option value="Nifty">Gold Forecast</option>
-            <option value="Bank Nifty">Crypto Forecast</option>
+            <option>Forex Forecast</option>
+            <option>Gold Forecast</option>
+            <option>Crypto Forecast</option>
           </select>
 
           <input
@@ -81,7 +107,11 @@ export default function CreatePost() {
             <div className="border w-[50%] sm:w-1/4 sm:h-72 border-gray-700 bg-[#1d1b25] rounded  text-center">
               {formData.blog_image ? (
                 <img
-                  src={formData.blog_image_preview || "#"}
+                  src={
+                    formData.blog_image
+                      ? URL.createObjectURL(formData.blog_image)
+                      : "#"
+                  }
                   alt="main-cover"
                   className="w-full h-full object-cover"
                 />
@@ -95,7 +125,10 @@ export default function CreatePost() {
                 </>
               )}
             </div>
-            <div className="border flex-1 h-72 border-gray-700 bg-[#1d1b25] rounded p-4 text-center">
+            <div
+              onClick={() => mainImageRef.current.click()}
+              className="border flex-1 h-72 border-gray-700 bg-[#1d1b25] rounded p-4 text-center"
+            >
               <div className="flex flex-col gap-7">
                 <img
                   src={uploadImage1}
@@ -120,6 +153,7 @@ export default function CreatePost() {
               </div>
               <input
                 hidden
+                ref={mainImageRef}
                 type="file"
                 name="blog_image"
                 onChange={handleChange}

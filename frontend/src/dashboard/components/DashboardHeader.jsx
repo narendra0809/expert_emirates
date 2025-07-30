@@ -96,7 +96,9 @@ export default function DashboardHeader({ onMenuClick }) {
 
             {/* Settings */}
             <Link
-              to="/dashboard/setting"
+              to={`/${
+                currentUser.role === "user" ? "dashboard" : "admin"
+              }/setting`}
               className="text-white hover:text-yellow-400 transition"
             >
               <FiSettings className="w-5 h-5" />

@@ -59,7 +59,7 @@ export default function MetaPropertiesForm({
   };
 
   return (
-    <div className="w-full min-h-screen bg-black text-white py-6">
+    <div className="w-full bg-black text-white py-6">
       <div className="rounded-xl bg-[#121117] p-6 space-y-6 shadow-md">
         <h2 className="text-xl font-semibold">Properties</h2>
         <p className="text-sm text-[#637381] mb-4">
@@ -126,7 +126,7 @@ export default function MetaPropertiesForm({
       </div>
 
       {/* Footer black section with publish & buttons */}
-      <div className="bg-black rounded-b-xl mt-10 flex flex-col md:flex-row justify-between items-center gap-6 p-6">
+      <div className="bg-black rounded-b-xl mt-8 flex flex-col md:flex-row justify-between items-center gap-6">
         {/* Publish Switch */}
         <div className="flex items-center gap-4">
           <Switch

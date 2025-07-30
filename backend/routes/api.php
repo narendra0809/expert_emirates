@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\BlogController;
 use App\Http\Controllers\Api\PlanController;
+use App\Http\Controllers\SettingController;
 use App\Http\Controllers\Api\BlogCategoryController;
 use App\Http\Controllers\Api\PlanCategoryController;
 use App\Http\Controllers\Api\TransactionController;
@@ -35,6 +36,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::apiResource('blogs', BlogController::class);
         Route::apiResource('blog-categories', BlogCategoryController::class);
         Route::apiResource('plans', PlanController::class);
+        Route::apiResource('settings', SettingController::class);
         // Route::post('add-plan',[PlanController::class,'store']);
         Route::apiResource('plan-categories', PlanCategoryController::class);
         Route::apiResource('transactions', TransactionController::class)->only(['index', 'show']);

@@ -94,41 +94,29 @@ class BlogController extends Controller
 
     public function destroy(Blog $blog)
     {
-        $blog->delete();
-        return response()->json(['message' => 'Blog deleted']);
+        try {
+            $blog->delete();
+            return response()->json(["success"=>true,'message' => 'Blog deleted']);
+        } catch (\Throwable $th) {
+            return response()->json(["success"=>false,'message' => 'Failed to delete blog']);
+        }
     }
 
     public function update(Request $request, Blog $blog)
 {
-    Log::info('Starting blog update', [
-        'blog_id' => $blog->id,
-        'request_method' => $request->method(),
-        'headers' => $request->headers->all()
-    ]);
 
     try {
         // Handle multipart/form-data for PATCH requests
         if ($request->isMethod('patch') && str_contains($request->header('Content-Type'), 'multipart/form-data')) {
-            Log::debug('Processing PATCH with multipart/form-data');
-
             $parsed = $this->parseMultipartData($request->getContent());
-            Log::debug('Parsed multipart data', [
-                'data_fields' => array_keys($parsed['data']),
-                'files' => array_keys($parsed['files'])
-            ]);
-
             $request->merge($parsed['data']);
 
             foreach ($parsed['files'] as $key => $file) {
                 $request->files->set($key, $file);
-                Log::debug('Added file to request', [
-                    'field' => $key,
-                    'filename' => $file->getClientOriginalName()
-                ]);
             }
         }
 
-        Log::debug('Request data before validation', $request->all());
+        // Log::debug('Request data before validation', $request->all());
 
         $validator = Validator::make($request->all(), [
             'title' => 'sometimes|string|max:255',
@@ -156,7 +144,7 @@ class BlogController extends Controller
             'content' => $request->content ?? $blog->content,
             'meta_title' => $request->meta_title ?? $blog->meta_title,
             'meta_desc' => $request->meta_desc ?? $blog->meta_desc,
-            'meta_key' => $request->has('meta_key') ? $request->meta_key : $blog->meta_key,
+            'meta_key' =>  $request->meta_key ?? $blog->meta_key,
         ];
 
         if ($request->has('is_published') && $request->is_published === "published") {
@@ -267,7 +255,7 @@ class BlogController extends Controller
 
         Log::info('Blog updated successfully', [
             'blog_id' => $blog->id,
-            'updated_fields' => array_keys($data)
+            'updated_fields' => $data
         ]);
 
         return response()->json([
@@ -290,7 +278,6 @@ class BlogController extends Controller
         ], 500);
     }
 }
-
 protected function parseMultipartData($content)
 {
     Log::debug('Parsing multipart data', ['content_length' => strlen($content)]);
@@ -318,7 +305,25 @@ protected function parseMultipartData($content)
         $fieldName = $matches[1] ?? null;
 
         if ($fieldName) {
-            if (isset($headers['content-type'])) {
+            // Check if it's an array field (ends with [])
+            if (substr($fieldName, -2) === '[]') {
+                $baseName = substr($fieldName, 0, -2);
+                $value = trim($body);
+
+                Log::debug('Processing array data part', [
+                    'part_index' => $i,
+                    'field_name' => $fieldName,
+                    'base_name' => $baseName,
+                    'value_length' => strlen($value)
+                ]);
+
+                // push value into array, even if only once
+                if (!isset($data[$baseName])) {
+                    $data[$baseName] = [];
+                }
+                $data[$baseName][] = $value;
+
+            } elseif (isset($headers['content-type'])) {
                 Log::debug('Processing file part', [
                     'part_index' => $i,
                     'field_name' => $fieldName,
@@ -354,6 +359,7 @@ protected function parseMultipartData($content)
 
     return ['data' => $data, 'files' => $files];
 }
+
 
 protected function parseHeaders($headers)
 {
