@@ -64,7 +64,6 @@ export default function LoginPage() {
         dispatch(loginFailure(response.data.error));
         return;
       }
-      console.log(response.data);
       dispatch(loginSuccess(response.data));
       if (currentUser?.role === "admin") {
         navigate("/admin");
@@ -72,7 +71,7 @@ export default function LoginPage() {
         navigate("/dashboard");
       }
     } catch (err) {
-      dispatch(loginFailure(err.message));
+      dispatch(loginFailure(err.response.data.error));
       console.error("Login error:", err);
     }
   };
@@ -128,7 +127,7 @@ export default function LoginPage() {
               />
             </div>
 
-            {error && <p className="text-red-500 text-sm">{error}</p>}
+            {error ? <p className="text-red-500 text-sm">{error}</p> : ""}
 
             <div className="text-right">
               <Link to="/forgot-password" className="text-red-500 text-sm">

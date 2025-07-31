@@ -237,7 +237,7 @@ export default function AddPlan() {
                 Crypto Currency
               </option>
               <option className="bg-[#121117] text-gray-200">
-                Portfolio Managment
+                Portfolio Management
               </option>
             </select>
           </div>
@@ -311,7 +311,7 @@ export default function AddPlan() {
           </div>
 
           {/* FEATURES LIST */}
-          <div className="space-y-2 mb-6">
+          <div className="space-y-2 mb-6 overflow-y-auto">
             {features.map((feature) => (
               <div key={feature.id} className="flex items-center gap-2">
                 <input
@@ -391,7 +391,7 @@ export default function AddPlan() {
           </button>
         </div>
 
-        <div className="w-full h-full space-y-4 max-h-[550px] pr-2">
+        <div className="w-full h-full space-y-4 max-h-[550px] pr-2 overflow-y-auto">
           {loadingPlans ? (
             <Loader width={50} height={50} />
           ) : plans.length === 0 ? (

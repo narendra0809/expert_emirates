@@ -6,22 +6,26 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
-    public function up(): void
+       public function up(): void
     {
         Schema::create('users', function (Blueprint $table) {
-            $table->id();
-            $table->string('name');
-            $table->string('email')->unique();
-            $table->string('password');
-            $table->enum('role', ['user', 'admin'])->default('user');
-            $table->boolean('is_banned')->default(false);
-            $table->string('otp')->nullable();
-            $table->timestamp('otp_expires_at')->nullable();
-            $table->timestamps();
-        });
+    $table->id();
+    $table->string('name');
+    $table->string('email')->unique();
+    $table->string('password');
+    $table->enum('role', ['user', 'admin'])->default('user');
+    $table->boolean('is_banned')->default(false);
+    $table->string('otp')->nullable();
+    $table->timestamp('otp_expires_at')->nullable();
+    // NEW OPTIONAL FIELDS
+    $table->string('phone')->nullable();
+    $table->string('address')->nullable();
+    $table->string('country')->nullable();
+    $table->string('state')->nullable();
+    $table->string('city')->nullable();
+    $table->string('zip')->nullable();
+    $table->timestamps();
+});
 
         Schema::create('password_reset_tokens', function (Blueprint $table) {
             $table->string('email')->primary();
@@ -38,10 +42,6 @@ return new class extends Migration
             $table->integer('last_activity')->index();
         });
     }
-
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('users');

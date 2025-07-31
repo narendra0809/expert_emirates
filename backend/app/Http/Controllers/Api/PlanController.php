@@ -74,26 +74,4 @@ public function update(Request $request, Plan $plan)
         }
     }
 
-    public function buy(Request $request)
-    {
-        $request->validate([
-            'plan_id' => 'required|exists:plans,id',
-            'payment_gateway_id' => 'required|exists:payment_gateways,id',
-        ]);
-
-        $plan = Plan::findOrFail($request->plan_id);
-
-        $transaction = Transaction::create([
-            'user_id' => auth()->id(),
-            'plan_id' => $request->plan_id,
-            'payment_gateway_id' => $request->payment_gateway_id,
-            'amount' => $plan->price,
-            'status' => 'pending',
-            'transaction_id' => Str::random(10),
-        ]);
-
-        return response()->json(['message' => 'Plan purchase initiated', 'transaction' => $transaction], 201);
-    }
-
-
 }

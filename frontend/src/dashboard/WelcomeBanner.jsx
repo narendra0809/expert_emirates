@@ -2,7 +2,7 @@ import heroImage from "../assets/dashboard/heroImage.png";
 
 export default function WelcomeBanner() {
   return (
-    <div className="w-full bg-black p-2 sm:px-6 md:px-8 lg:px-12 xl:px-16">
+    <div className="w-full bg-black">
       <div className="pt-4 pb-4 w-full rounded-2xl bg-[#1D1B25] text-white shadow-md flex flex-col md:flex-row items-center justify-between gap-6 pr-5 pl-5">
         {/* Text Section */}
         <div className="w-full md:flex-1 text-center md:text-left">

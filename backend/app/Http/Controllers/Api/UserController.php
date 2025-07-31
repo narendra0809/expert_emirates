@@ -15,23 +15,37 @@ class UserController extends Controller
     }
 
     public function store(Request $request)
-    {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:8',
-            'role' => 'required|in:user,admin',
-        ]);
+{
+    $request->validate([
+        'name' => 'required|string|max:255',
+        'email' => 'required|string|email|max:255|unique:users',
+        'password' => 'required|string|min:8',
+        'role' => 'required|in:user,admin',
+        // Optional fields
+        'phone' => 'nullable|string|max:255',
+        'address' => 'nullable|string|max:255',
+        'country' => 'nullable|string|max:255',
+        'state' => 'nullable|string|max:255',
+        'city' => 'nullable|string|max:255',
+        'zip' => 'nullable|string|max:255',
+    ]);
 
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => bcrypt($request->password),
-            'role' => $request->role,
-        ]);
+    $user = User::create([
+        'name' => $request->name,
+        'email' => $request->email,
+        'password' => bcrypt($request->password),
+        'role' => $request->role,
+        'phone' => $request->phone,
+        'address' => $request->address,
+        'country' => $request->country,
+        'state' => $request->state,
+        'city' => $request->city,
+        'zip' => $request->zip,
+    ]);
 
-        return response()->json($user, 201);
-    }
+    return response()->json($user, 201);
+}
+
 
     public function show(User $user)
     {
@@ -39,17 +53,28 @@ class UserController extends Controller
     }
 
     public function update(Request $request, User $user)
-    {
-        $request->validate([
-            'name' => 'sometimes|string|max:255',
-            'email' => 'sometimes|string|email|max:255|unique:users,email,' . $user->id,
-            'role' => 'sometimes|in:user,admin',
-        ]);
+{
+    $request->validate([
+        'name' => 'sometimes|string|max:255',
+        'email' => 'sometimes|string|email|max:255|unique:users,email,' . $user->id,
+        'role' => 'sometimes|in:user,admin',
+        // Optional fields
+        'phone' => 'nullable|string|max:255',
+        'address' => 'nullable|string|max:255',
+        'country' => 'nullable|string|max:255',
+        'state' => 'nullable|string|max:255',
+        'city' => 'nullable|string|max:255',
+        'zip' => 'nullable|string|max:255',
+    ]);
 
-        $user->update($request->only(['name', 'email', 'role']));
+    $user->update($request->only([
+        'name', 'email', 'role',
+        'phone', 'address', 'country', 'state', 'city', 'zip'
+    ]));
 
-        return response()->json($user);
-    }
+    return response()->json($user);
+}
+
 
     public function destroy(User $user)
     {
@@ -69,14 +94,24 @@ class UserController extends Controller
     }
 
     public function updateProfile(Request $request)
-    {
-        $request->validate([
-            'name' => 'sometimes|string|max:255',
-            'email' => 'sometimes|string|email|max:255|unique:users,email,' . auth()->id(),
-        ]);
+{
+    $request->validate([
+        'name' => 'sometimes|string|max:255',
+        'email' => 'sometimes|string|email|max:255|unique:users,email,' . auth()->id(),
+        // Optional fields
+        'phone' => 'nullable|string|max:255',
+        'address' => 'nullable|string|max:255',
+        'country' => 'nullable|string|max:255',
+        'state' => 'nullable|string|max:255',
+        'city' => 'nullable|string|max:255',
+        'zip' => 'nullable|string|max:255',
+    ]);
 
-        auth()->user()->update($request->only(['name', 'email']));
+    auth()->user()->update($request->only([
+        'name', 'email',
+        'phone', 'address', 'country', 'state', 'city', 'zip'
+    ]));
 
-        return response()->json(auth()->user());
-    }
+    return response()->json(auth()->user());
+}
 }

@@ -75,7 +75,7 @@ export default function TransactionHistory() {
   ];
 
   return (
-    <div className="mx-4 sm:mx-16 mt-4 sm:mt-6">
+    <>
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 sm:mb-6 gap-3">
         <h2 className="text-lg sm:text-2xl font-bold text-white w-full sm:w-auto text-center sm:text-left">
@@ -258,6 +258,6 @@ export default function TransactionHistory() {
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }

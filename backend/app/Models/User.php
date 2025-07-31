@@ -9,7 +9,13 @@ class User extends Authenticatable
 {
     use HasApiTokens;
 
-    protected $fillable = ['name', 'email', 'password', 'role', 'is_banned', 'otp', 'otp_expires_at'];
+    protected $fillable = [
+        'name', 'email', 'password', 'role', 'is_banned',
+        'otp', 'otp_expires_at',
+        // NEW OPTIONAL FIELDS:
+        'phone', 'address', 'country', 'state', 'city', 'zip',
+    ];
+
 
     public function blogs()
     {

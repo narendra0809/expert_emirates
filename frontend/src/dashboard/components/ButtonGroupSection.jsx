@@ -8,21 +8,21 @@ export default function ButtonGroupSection({ clicked, setClicked }) {
           text="Forex + Gold"
           clicked={clicked}
           setClicked={setClicked}
-          eText="forex"
+          eText="Forex"
           className="w-full sm:w-auto px-4 py-2 text-sm sm:text-base"
         />
         <ToggleButton
           text="Crypto"
           clicked={clicked}
           setClicked={setClicked}
-          eText="crypto"
+          eText="Crypto Currency"
           className="w-full sm:w-auto px-4 py-2 text-sm sm:text-base"
         />
         <ToggleButton
           text="Portfolio Management"
           clicked={clicked}
           setClicked={setClicked}
-          eText="portfolio"
+          eText="Portfolio Managment"
           className="w-full sm:w-auto px-4 py-2 text-sm sm:text-base"
         />
       </div>

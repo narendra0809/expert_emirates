@@ -1,4 +1,4 @@
-const Loader = ({ width, height }) => {
+const Loader = ({ width = 20, height = 20 }) => {
   return (
     <div className="flex items-center justify-center w-full h-full min-h-full">
       <div

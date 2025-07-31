@@ -23,8 +23,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('profile', [UserController::class, 'updateProfile']);
     Route::post('change-password', [AuthController::class, 'changePassword']);
     Route::get('plans', [PlanController::class, 'index']);
+    Route::get('settings', [SettingController::class, 'index']);
     Route::get('plans/{plan}', [PlanController::class, 'show']);
-    Route::post('plans/buy', [PlanController::class, 'buy']);
+    Route::post('plans/buy', [TransactionController::class, 'buy']);
     Route::get('my-plans', [PlanController::class, 'myPlans']);
     Route::get('transactions', [TransactionController::class, 'userTransactions']);
     Route::get('payment-gateways', [PaymentGatewayController::class, 'index']);

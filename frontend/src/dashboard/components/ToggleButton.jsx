@@ -1,6 +1,6 @@
 export default function ToggleButton({ text, clicked, setClicked, eText }) {
   let isActive = clicked === eText;
-  if (clicked === "gold" && eText === "forex") {
+  if (clicked === "Gold" && eText === "Forex") {
     isActive = true;
   }
 

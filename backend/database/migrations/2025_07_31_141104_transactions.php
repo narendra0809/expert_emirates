@@ -11,21 +11,18 @@ return new class extends Migration
      */
     public function up(): void
     {
-       Schema::create('transactions', function (Blueprint $table) {
+               Schema::create('transactions', function (Blueprint $table) {
     $table->id();
     $table->foreignId('user_id')->constrained()->onDelete('cascade');
     $table->foreignId('plan_id')->constrained()->onDelete('cascade');
     $table->foreignId('payment_gateway_id')->constrained('payment_gateways')->onDelete('cascade');
-    $table->decimal('amount', 8, 2);
-    $table->string('status')->default('pending');
-    $table->string('transaction_id')->nullable();
+     $table->enum('status', ['pending', 'approved','reject'])->default('pending');
+     $table->string("payment_image");
     $table->timestamps();
 });
     }
 
-    /**
-     * Reverse the migrations.
-     */
+
     public function down(): void
     {
         Schema::dropIfExists('transactions');

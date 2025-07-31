@@ -4,7 +4,7 @@ const SupportSection = () => {
   const [hovered, setHovered] = useState(false);
 
   return (
-    <div className="w-full bg-black px-3 sm:px-5 md:px-8 lg:px-12 xl:px-16 pt-4 sm:pt-6 pb-10 hide-scrollbar">
+    <div className="w-full bg-black px-3 hide-scrollbar">
       <div
         className="w-full max-w-screen-2xl mx-auto bg-[#1D1B25] text-white rounded-xl px-4 sm:px-6 md:px-10 py-6 sm:py-8 md:py-10 shadow-md flex flex-col items-center justify-center gap-4 sm:gap-5 md:gap-6"
         role="region"

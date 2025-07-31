@@ -2,12 +2,44 @@ import { useState, useEffect } from "react";
 import DashboardHeader from "./components/DashboardHeader";
 import Sidebar from "./components/Sidebar";
 import { Outlet } from "react-router-dom";
+import api from "../axios/api";
 
 export default function Dashboard() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+  const [plans, setPlans] = useState();
 
+  const fetchPlans = async () => {
+    try {
+      const response = await api.get("/plans");
+      if (response.data.length !== 0) {
+        const plansData = convertPlansToDisplay(response.data);
+        setPlans(plansData);
+        return;
+      }
+      setPlans({});
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const convertPlansToDisplay = (data) => {
+    const convertedPlans = {
+      Forex: [],
+      Gold: [],
+      "Crypto Currency": [],
+      "Portfolio Managment": [],
+    };
+    data.forEach((plan) => {
+      plan.features = JSON.parse(plan.features);
+      convertedPlans[plan.category].push(plan);
+    });
+    return convertedPlans;
+  };
+  useEffect(() => {
+    fetchPlans();
+  }, []);
   useEffect(() => {
     const handleResize = () => {
       const isNowMobile = window.innerWidth < 768;
@@ -56,8 +88,8 @@ export default function Dashboard() {
           setIsCollapsed={setIsCollapsed}
           sidebarOpen={sidebarOpen}
         />
-        <div className="flex-1 overflow-y-auto">
-          <Outlet />
+        <div className="flex-1 overflow-y-auto p-3 md:ml-16 md:pr-16">
+          <Outlet context={{ plans: plans }} />
         </div>
       </div>
     </div>

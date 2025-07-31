@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import generalActiveIcon from "../../assets/dashboard/starticon.png";
 import shareActiveIcon from "../../assets/share_active.png";
 import generalIcon from "../../assets/general.png";
@@ -11,7 +11,7 @@ import LogoFaviconUpload from "./LogoFaviconUpload";
 import PasswordResetTab from "../../components/PasswordResetTab";
 import SocialLinksTab from "../../components/SocialLinksTab";
 import GeneralTab from "../../components/GeneralTab";
-
+import api from "../../axios/api";
 export default function AdminSettings() {
   const [activeTab, setActiveTab] = useState("General");
   const tabs = [
@@ -19,6 +19,23 @@ export default function AdminSettings() {
     { label: "Social links", icon: <FiShare2 /> },
     { label: "Security", icon: <FiKey /> },
   ];
+
+  const [socialLinks, setSocialLinks] = useState();
+  const [icons, setIcons] = useState();
+
+  const fetchSettings = async () => {
+    try {
+      const response = await api.get("/admin/settings");
+      setSocialLinks(response.data[0]);
+      setIcons(response.data[0]);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchSettings();
+  }, [activeTab]);
 
   return (
     <main className="flex flex-col gap-5">
@@ -75,11 +92,13 @@ export default function AdminSettings() {
       {activeTab === "General" && <GeneralTab />}
 
       {/* SOCIAL LINKS TAB */}
-      {activeTab === "Social links" && <SocialLinksTab />}
+      {activeTab === "Social links" && (
+        <SocialLinksTab socialLinks={socialLinks} />
+      )}
 
       {/* SECURITY TAB */}
       {activeTab === "Security" && <PasswordResetTab />}
-      <LogoFaviconUpload />
+      <LogoFaviconUpload iconsUrl={icons} />
     </main>
   );
 }

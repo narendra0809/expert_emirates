@@ -1,8 +1,10 @@
-import { useState } from "react";
-import logoImage from "../assets/setting/image1.png";
-import faviconImage from "../assets/setting/logo.png";
+import { useEffect, useState } from "react";
+// import logoImage from "../assets/setting/image1.png";
+// import faviconImage from "../assets/setting/logo.png";
+import api from "../../axios/api";
+import toast from "react-hot-toast";
 
-const UploadCard = ({ title, imgSrc, name, onUpload, onRemove }) => {
+const UploadCard = ({ title, imgSrc, name, onUpload, onSave }) => {
   return (
     <div className="bg-[#121117] border border-[#1e1e25] rounded-xl p-4 w-full md:w-[48%] shadow-md">
       <div className="flex flex-col md:flex-row items-center gap-6">
@@ -28,10 +30,10 @@ const UploadCard = ({ title, imgSrc, name, onUpload, onRemove }) => {
               />
             </label>
             <button
-              onClick={onRemove}
-              className="text-gray-300 text-sm hover:underline"
+              onClick={() => onSave()}
+              className="font-semibold text-gradient py-2 px-4 rounded-xl text-sm hover:underline hover:brightness-110"
             >
-              Remove
+              Save
             </button>
           </div>
         </div>
@@ -40,27 +42,72 @@ const UploadCard = ({ title, imgSrc, name, onUpload, onRemove }) => {
   );
 };
 
-export default function LogoFaviconUpload() {
-  const [logo, setLogo] = useState(logoImage);
-  const [favicon, setFavicon] = useState(faviconImage);
+export default function LogoFaviconUpload({ iconsUrl }) {
+  const [icons, setIcons] = useState({
+    logo: null,
+    favicon: null,
+  });
+
+  const checkDataExist = async () => {
+    try {
+      const response = await api.get("/admin/settings");
+      return { data: response.data, exist: response.data.length !== 0 };
+    } catch (error) {
+      console.log(error);
+    }
+  };
   const handleIconUplaod = (e) => {
     const { name, files } = e.target;
+    setIcons({ ...icons, [name]: files[0] });
   };
+  const handleSave = async () => {
+    if (!icons.logo || !icons.favicon) {
+      return;
+    }
+    try {
+      const { data, exist } = await checkDataExist();
+      if (exist) {
+        await api.patch(`/admin/settings/${data[0].id}`, icons, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        });
+      } else {
+        await api.post("/admin/settings/", icons, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        });
+      }
+      toast.success(
+        `${
+          !icons.logo ? "Favicon" : !icons.favicon ? "Logo" : "Icons"
+        } updated successfully`,
+        { duration: 3000 }
+      );
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    setIcons({ logo: iconsUrl?.logo, favicon: iconsUrl?.favicon });
+  }, [iconsUrl]);
   return (
     <div className="flex flex-col md:flex-row justify-between flex-wrap gap-6 md:gap-4">
       <UploadCard
         title="Logo Change"
-        imgSrc={logo}
+        imgSrc={icons.logo}
         name="logo"
         onUpload={handleIconUplaod}
-        // onRemove={}
+        onSave={handleSave}
       />
       <UploadCard
         title="Favicon Change"
-        imgSrc={favicon}
+        imgSrc={icons.favicon}
         name="favicon"
         onUpload={handleIconUplaod}
-        // onRemove={() => setFavicon("")}
+        onSave={handleSave}
       />
     </div>
   );

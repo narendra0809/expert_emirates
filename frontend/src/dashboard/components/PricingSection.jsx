@@ -8,6 +8,7 @@ export default function PricingSection({
   setClicked,
   text,
   setEText,
+  plans,
 }) {
   const isActive = (type) => clicked === type;
   const [activeIndex, setActiveIndex] = useState(0);
@@ -93,14 +94,14 @@ export default function PricingSection({
   return (
     <div className="w-full overflow-x-s hide-scrollbar py-8 text-white bg-black flex flex-col items-center justify-center mx-auto">
       {/* Toggle Buttons */}
-      {(clicked === "forex" || clicked === "gold") && (
+      {(clicked === "Forex" || clicked === "Gold") && (
         <div className="flex gap-2 xs:gap-3 sm:gap-4 justify-center mb-6 sm:mb-8 lg:mb-10">
-          {["forex", "gold"].map((type) => (
+          {["Forex", "Gold"].map((type) => (
             <button
               key={type}
               onClick={() => {
                 setClicked(type);
-                setEText?.(type.toUpperCase());
+                setEText(type);
               }}
               className={`min-w-[70px] xs:min-w-[80px] sm:min-w-[90px] px-3 xs:px-4 py-1.5 xs:py-2 rounded-full text-xs xs:text-sm sm:text-base font-medium transition-all duration-300
                 ${
@@ -124,11 +125,12 @@ export default function PricingSection({
           } gap-4 sm:gap-4 lg:gap-4 pb-4 sm:pb-6 snap-x snap-mandatory scroll-smooth`}
           style={{ scrollbarWidth: "none" }}
         >
-          {pricingPlans[clicked]?.map((plan, i) => (
-            <div
-              key={i}
-              ref={(el) => (cardRefs.current[i] = el)}
-              className={`
+          {plans &&
+            plans[clicked]?.map((plan, i) => (
+              <div
+                key={i}
+                ref={(el) => (cardRefs.current[i] = el)}
+                className={`
                 ${
                   isMobile
                     ? "mx-auto transition-all duration-500 ease-in-out"
@@ -137,26 +139,26 @@ export default function PricingSection({
                 ${isMobile && i !== activeIndex ? "hidden" : ""}
                 w-[340px] sm:w-[400px] h-full flex-shrink-0 snap-center
               `}
-              style={{
-                transform: isMobile
-                  ? `translateX(${(i - activeIndex) * 100}%)`
-                  : "none",
-                opacity: isMobile && i !== activeIndex ? 0 : 1,
-              }}
-            >
-              <PricingCard
-                plan={plan}
-                highlight={i === activeIndex}
-                scrollToCard={() => scrollToCard(i)}
-              />
-            </div>
-          ))}
+                style={{
+                  transform: isMobile
+                    ? `translateX(${(i - activeIndex) * 100}%)`
+                    : "none",
+                  opacity: isMobile && i !== activeIndex ? 0 : 1,
+                }}
+              >
+                <PricingCard
+                  plan={plan}
+                  highlight={i === activeIndex}
+                  scrollToCard={() => scrollToCard(i)}
+                />
+              </div>
+            ))}
         </div>
 
         {/* Scroll indicators (for mobile) */}
         {isMobile && (
           <div className="flex justify-center gap-1.5 mt-4">
-            {pricingPlans[clicked]?.map((_, i) => (
+            {plans[clicked]?.map((_, i) => (
               <button
                 key={`indicator-${i}`}
                 onClick={() => scrollToCard(i)}
