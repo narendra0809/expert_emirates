@@ -28,6 +28,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('plans/buy', [TransactionController::class, 'buy']);
     Route::get('my-plans', [PlanController::class, 'myPlans']);
     Route::get('transactions', [TransactionController::class, 'userTransactions']);
+    Route::delete('transactions/{id}', [TransactionController::class, 'destroy']);
     Route::get('payment-gateways', [PaymentGatewayController::class, 'index']);
 
     // Admin Routes
@@ -40,6 +41,8 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::apiResource('settings', SettingController::class);
         // Route::post('add-plan',[PlanController::class,'store']);
         Route::apiResource('plan-categories', PlanCategoryController::class);
+        Route::post('transaction-update/{id}', [TransactionController::class,'approved_by_admin']);
+        Route::post('transaction-reject/{id}', [TransactionController::class,'reject_by_admin']);
         Route::apiResource('transactions', TransactionController::class)->only(['index', 'show']);
         Route::apiResource('payment-gateways', PaymentGatewayController::class);
     });

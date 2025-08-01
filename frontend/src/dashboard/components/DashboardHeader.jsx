@@ -5,7 +5,6 @@ import profilePic from "../../assets/dashboard/stack.png";
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../../features/user/userSlice";
 export default function DashboardHeader({ onMenuClick }) {
-  const [showSearch, setShowSearch] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
@@ -49,51 +48,6 @@ export default function DashboardHeader({ onMenuClick }) {
 
           {/* Right Side: Search, Icons, Profile */}
           <div className="flex items-center gap-2 sm:gap-3 min-w-0">
-            {/* Search - Desktop */}
-            <div className="relative hidden sm:flex items-center">
-              {showSearch ? (
-                <>
-                  <input
-                    type="text"
-                    autoFocus
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    placeholder="Search..."
-                    className="bg-[#1a1921] text-white text-sm px-3 py-1.5 rounded-md placeholder:text-gray-400 outline-none focus:ring-2 focus:ring-yellow-500 w-40 sm:w-56 md:w-64"
-                  />
-                  <button
-                    onClick={() => setShowSearch(false)}
-                    className="absolute right-2 text-gray-400 hover:text-white"
-                  >
-                    <FiX size={16} />
-                  </button>
-                </>
-              ) : (
-                <button
-                  onClick={() => setShowSearch(true)}
-                  className="text-white hover:text-yellow-400 transition"
-                >
-                  <FiSearch size={20} />
-                </button>
-              )}
-            </div>
-
-            {/* Mobile Search Icon */}
-            <button
-              className="sm:hidden text-white hover:text-yellow-400 transition"
-              onClick={() => setMobileSearchOpen(true)}
-            >
-              <FiSearch size={20} />
-            </button>
-
-            {/* Notifications */}
-            <div className="relative">
-              <FiBell className="text-white w-5 h-5 cursor-pointer hover:text-yellow-400 transition" />
-              <span className="absolute -top-1 -right-1 text-[10px] bg-red-500 text-white w-4 h-4 rounded-full flex items-center justify-center font-bold">
-                1
-              </span>
-            </div>
-
             {/* Settings */}
             <Link
               to={`/${

@@ -1,7 +1,9 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const SupportSection = () => {
   const [hovered, setHovered] = useState(false);
+  const navigate = useNavigate();
 
   return (
     <div className="w-full bg-black px-3 hide-scrollbar">
@@ -26,6 +28,7 @@ const SupportSection = () => {
         {/* Gradient Button */}
         <div className="mt-3 p-[2px] rounded-full bg-[linear-gradient(90deg,#281000_0%,#C0971C_25.5%,#FFE976_50.5%,#C0971C_74.5%,#281000_100%)] shadow-[0_0_17px_rgba(254,214,0,0.2)]">
           <button
+            onClick={() => navigate("/support")}
             onMouseEnter={() => setHovered(true)}
             onMouseLeave={() => setHovered(false)}
             className={`w-[160px] sm:w-[180px] md:w-[200px] h-[42px] sm:h-[44px] md:h-[46px] rounded-full font-bold text-sm sm:text-base transition duration-300 ${

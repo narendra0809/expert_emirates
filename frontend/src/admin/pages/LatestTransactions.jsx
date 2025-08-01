@@ -7,6 +7,7 @@ import {
   FaEdit,
 } from "react-icons/fa";
 import { IoChevronDown, IoChevronUp } from "react-icons/io5";
+import api from "../../axios/api";
 
 const generateDummyData = () => {
   const statuses = ["Active", "Pending", "Banned", "Rejected"];
@@ -27,8 +28,16 @@ const generateDummyData = () => {
   }));
 };
 
-export default function LatestTransactions() {
+export default function LatestTransactions({
+  transactions,
+  fetchTransactions,
+}) {
   const [search, setSearch] = useState("");
+  const [imageModal, setImageModal] = useState({
+    open: false,
+    imgSrc: null,
+  });
+
   const [filtered, setFiltered] = useState([]);
   const [statusFilter, setStatusFilter] = useState("All");
   const [methodFilter, setMethodFilter] = useState("All");
@@ -36,6 +45,18 @@ export default function LatestTransactions() {
   const [currentPage, setCurrentPage] = useState(1);
   const [showFilters, setShowFilters] = useState(false);
   const [selectedRows, setSelectedRows] = useState([]);
+
+  const [statusDropdown, setStatusDropdown] = useState({
+    open: false,
+    rowId: null,
+  });
+  const [confirmModal, setConfirmModal] = useState({
+    open: false,
+    newStatus: null,
+    row: null,
+  });
+  const [updatingStatus, setUpdatingStatus] = useState(false);
+
   const [dummyData, setDummyData] = useState([]);
   const [sortConfig, setSortConfig] = useState({
     key: null,
@@ -116,25 +137,15 @@ export default function LatestTransactions() {
     currentPage * rowsPerPage
   );
 
-  const toggleRowSelection = (id) => {
-    setSelectedRows((prev) =>
-      prev.includes(id) ? prev.filter((rowId) => rowId !== id) : [...prev, id]
-    );
-  };
-
-  const toggleSelectAll = () => {
-    if (selectedRows.length === paginatedData.length) {
-      setSelectedRows([]);
-    } else {
-      setSelectedRows(paginatedData.map((row) => row.id));
-    }
-  };
-
   const clearFilters = () => {
     setSearch("");
     setStatusFilter("All");
     setMethodFilter("All");
     setSortConfig({ key: null, direction: "ascending" });
+  };
+
+  const handleShowImage = (imgSrc) => {
+    setImageModal({ open: true, imgSrc });
   };
 
   const statusCounts = {
@@ -150,8 +161,72 @@ export default function LatestTransactions() {
     ...new Set(dummyData.map((item) => item.method)),
   ];
 
+  const handleStatusChange = async () => {
+    setUpdatingStatus(true);
+    try {
+      const url =
+        confirmModal.newStatus === "approved"
+          ? `/admin/transaction-update/${confirmModal.row.id}`
+          : `/admin/transaction-reject/${confirmModal.row.id}`;
+      await api.post(url);
+      fetchTransactions();
+    } catch (err) {
+      console.log(err);
+    } finally {
+      setUpdatingStatus(false);
+      setConfirmModal({
+        open: false,
+        newStatus: null,
+        row: null,
+      });
+    }
+  };
+
   return (
     <div className="flex flex-col  bg-black text-white pb-5">
+      {confirmModal.open && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60">
+          <div className="bg-[#1a1a20] border-2 border-yellow-400 rounded-2xl shadow-xl px-8 py-7 max-w-xs text-center">
+            <h4 className="text-lg font-bold mb-4 text-yellow-300">
+              Change Status
+            </h4>
+            <p className="text-white font-medium mb-4">
+              Are you sure you want to set this transaction status to
+              <span
+                className={`ml-2 font-bold ${
+                  confirmModal.newStatus === "approved"
+                    ? "text-green-400"
+                    : "text-red-400"
+                }`}
+              >
+                {confirmModal.newStatus.toUpperCase()}
+              </span>
+              ?
+            </p>
+            <div className="flex justify-center gap-4">
+              <button
+                onClick={handleStatusChange}
+                disabled={updatingStatus}
+                className={`px-4 py-2 rounded-full font-bold uppercase text-sm
+            bg-gradient-to-r from-yellow-700 via-yellow-400 to-yellow-600 text-black border border-yellow-300
+            hover:from-yellow-600 hover:to-yellow-800 hover:text-[#231F19]
+            transition-all`}
+              >
+                {updatingStatus ? "Updating..." : "Yes, Change"}
+              </button>
+              <button
+                onClick={() =>
+                  setConfirmModal({ open: false, newStatus: null, row: null })
+                }
+                className="px-4 py-2 rounded-full font-bold uppercase text-sm bg-gray-700 text-gray-200 hover:bg-gray-800 transition-all"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
         <h2 className="text-xl sm:text-2xl font-semibold">Transaction</h2>
       </div>
@@ -179,6 +254,46 @@ export default function LatestTransactions() {
       {/* Main Content */}
       <div className="bg-[#121117] rounded-xl shadow-md p-4 sm:p-6 border border-[#1c1c24] w-full hide-scrollbar">
         {/* Status Filters - Horizontal Scroll on Mobile */}
+
+        {imageModal.open && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-80">
+            <div className="relative bg-[#18181e] rounded-2xl shadow-2xl border-2 border-yellow-500 max-w-lg w-[97vw] p-6 sm:p-8 flex flex-col items-center">
+              <button
+                onClick={() => setImageModal({ open: false, imgSrc: null })}
+                className="absolute top-3 right-4 text-white text-3xl hover:text-yellow-400 transition"
+                aria-label="Close"
+                type="button"
+              >
+                &times;
+              </button>
+              <div className="mb-4 text-center text-yellow-300 font-bold text-lg uppercase tracking-widest">
+                Payment Proof
+              </div>
+              {imageModal.imgSrc ? (
+                <img
+                  src={imageModal.imgSrc}
+                  alt="Payment Proof"
+                  className="rounded-lg border border-yellow-700 max-h-[70vh] object-contain bg-black"
+                  style={{ maxWidth: "100%" }}
+                />
+              ) : (
+                <div className="text-gray-400 py-16 text-lg">
+                  No image available
+                </div>
+              )}
+              {imageModal.imgSrc && (
+                <a
+                  href={imageModal.imgSrc}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mt-4 inline-block bg-yellow-700 hover:bg-yellow-800 text-white text-sm font-bold rounded px-5 py-2 shadow transition"
+                >
+                  Open Full Size
+                </a>
+              )}
+            </div>
+          </div>
+        )}
 
         {/* Search and Action Bar */}
         <div className="flex flex-col md:flex-row md:items-center gap-4 mb-4">
@@ -322,18 +437,6 @@ export default function LatestTransactions() {
           <table className="min-w-full text-sm text-left ">
             <thead className="bg-[#1E1D24] text-gray-400">
               <tr>
-                {showColumn("checkbox") && (
-                  <th className="px-4 py-2 sticky left-0 bg-[#1E1D24] z-10">
-                    <input
-                      type="checkbox"
-                      checked={
-                        selectedRows.length === paginatedData.length &&
-                        paginatedData.length > 0
-                      }
-                      onChange={toggleSelectAll}
-                    />
-                  </th>
-                )}
                 {showColumn("id") && (
                   <th
                     className="px-4 py-2 cursor-pointer hover:text-white whitespace-nowrap"
@@ -364,6 +467,11 @@ export default function LatestTransactions() {
                       ))}
                   </div>
                 </th>
+                {showColumn("plan_category") && (
+                  <th className="px-4 py-2 cursor-pointer hover:text-white whitespace-nowrap">
+                    <div className="flex items-center gap-1">Plan Name</div>
+                  </th>
+                )}
                 {showColumn("amount") && (
                   <th
                     className="px-4 py-2 cursor-pointer hover:text-white whitespace-nowrap"
@@ -412,8 +520,8 @@ export default function LatestTransactions() {
                     </div>
                   </th>
                 )}
-                {showColumn("action") && (
-                  <th className="px-4 py-2 whitespace-nowrap">Action</th>
+                {showColumn("Payment Proof") && (
+                  <th className="px-4 py-2 whitespace-nowrap">Payment Proof</th>
                 )}
                 {showColumn("status") && (
                   <th
@@ -431,29 +539,17 @@ export default function LatestTransactions() {
                     </div>
                   </th>
                 )}
-                {showColumn("edit") && (
-                  <th className="px-4 py-2 whitespace-nowrap">Edit</th>
-                )}
               </tr>
             </thead>
             <tbody>
               {paginatedData.length > 0 ? (
-                paginatedData.map((row) => (
+                transactions.map((row) => (
                   <tr
                     key={row.id}
                     className={`border-b border-[#26242f] hover:bg-[#1a1a20] ${
                       selectedRows.includes(row.id) ? "bg-[#2a1a2a]" : ""
                     }`}
                   >
-                    {showColumn("checkbox") && (
-                      <td className="px-4 py-3 sticky left-0 bg-[#121117] z-10">
-                        <input
-                          type="checkbox"
-                          checked={selectedRows.includes(row.id)}
-                          onChange={() => toggleRowSelection(row.id)}
-                        />
-                      </td>
-                    )}
                     {showColumn("id") && (
                       <td className="px-4 py-3">#{row.id}</td>
                     )}
@@ -465,58 +561,117 @@ export default function LatestTransactions() {
                           className="w-8 h-8 rounded-full"
                         />
                         <div>
-                          <p>{row.name}</p>
-                          <p className="text-xs text-gray-500">{row.email}</p>
+                          <p>{row.user.name}</p>
+                          <p className="text-xs text-gray-500">
+                            {row.user.email}
+                          </p>
                         </div>
                       </div>
                     </td>
+                    {showColumn("plan_category") && (
+                      <td className="px-4 py-3 whitespace-nowrap">
+                        {row.plan.category}
+                      </td>
+                    )}
                     {showColumn("amount") && (
                       <td className="px-4 py-3 whitespace-nowrap">
-                        {row.amount}
+                        $ {row.plan.price}
                       </td>
                     )}
                     {showColumn("method") && (
                       <td className="px-4 py-3 whitespace-nowrap">
-                        {row.method}
+                        {row.payment_gateway.name}
                       </td>
                     )}
                     {showColumn("created") && (
                       <td className="px-4 py-3 whitespace-nowrap">
-                        {row.created}
+                        {new Date(row.created_at).toLocaleDateString()}
                       </td>
                     )}
-                    {showColumn("action") && (
+                    {showColumn("Payment Proof") && (
                       <td className="px-4 py-3 whitespace-nowrap">
-                        <button className="text-purple-400 hover:text-purple-300">
-                          {row.action}
+                        <button
+                          onClick={() => handleShowImage(row.payment_image)}
+                          className="text-purple-400 hover:text-purple-300"
+                        >
+                          View
                         </button>
                       </td>
                     )}
                     {showColumn("status") && (
-                      <td className="px-4 py-3 whitespace-nowrap">
-                        <span
-                          className={`px-2 py-1 rounded text-xs font-medium ${
-                            row.status === "Active"
-                              ? "bg-green-600 text-white"
-                              : row.status === "Pending"
-                              ? "bg-yellow-400 text-black"
-                              : row.status === "Banned"
-                              ? "bg-red-600 text-white"
-                              : "bg-gray-600 text-white"
-                          }`}
-                        >
-                          {row.status}
-                        </span>
-                      </td>
-                    )}
-                    {showColumn("edit") && (
-                      <td className="px-4 py-3 relative group whitespace-nowrap">
-                        <button className="text-purple-400 hover:text-purple-300">
-                          <FaEdit />
-                        </button>
-                        <div className="absolute top-[-30px] right-0 text-xs bg-gray-700 text-white px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition">
-                          Quick edit
-                        </div>
+                      <td className="px-4 py-3 whitespace-nowrap relative">
+                        {["approved", "reject"].includes(row.status) ? (
+                          <span
+                            className={`px-2 py-1 rounded text-xs font-medium ${
+                              row.status === "approved"
+                                ? "bg-green-600 text-white"
+                                : row.status === "reject"
+                                ? "bg-red-600 text-white"
+                                : "bg-gray-600 text-white"
+                            }`}
+                          >
+                            {row.status.toUpperCase()}
+                          </span>
+                        ) : (
+                          <div className="relative inline-block w-full">
+                            <button
+                              className={`flex justify-between items-center px-2 py-1 rounded text-xs font-medium w-full text-left ${
+                                row.status === "pending"
+                                  ? "bg-yellow-400 text-black hover:bg-yellow-300"
+                                  : "bg-gray-600 text-white"
+                              }`}
+                              onClick={() =>
+                                setStatusDropdown((prev) =>
+                                  prev.open && prev.rowId === row.id
+                                    ? { open: false, rowId: null }
+                                    : { open: true, rowId: row.id }
+                                )
+                              }
+                            >
+                              {row.status.toUpperCase()}
+
+                              <IoChevronDown className="inline ml-1 text-xs" />
+                            </button>
+                            {/* Dropdown list */}
+                            {statusDropdown.open &&
+                              statusDropdown.rowId === row.id && (
+                                <div className="absolute left-0 z-30 mt-1 bg-[#111010] border border-yellow-400  w-full rounded shadow-lg">
+                                  <button
+                                    onClick={() => {
+                                      setStatusDropdown({
+                                        open: false,
+                                        rowId: null,
+                                      });
+                                      setConfirmModal({
+                                        open: true,
+                                        newStatus: "approved",
+                                        row,
+                                      });
+                                    }}
+                                    className="block w-full text-left px-4 py-2 hover:bg-green-300 hover:text-green-900 text-sm"
+                                  >
+                                    Approve
+                                  </button>
+                                  <button
+                                    onClick={() => {
+                                      setStatusDropdown({
+                                        open: false,
+                                        rowId: null,
+                                      });
+                                      setConfirmModal({
+                                        open: true,
+                                        newStatus: "reject",
+                                        row,
+                                      });
+                                    }}
+                                    className="block w-full text-left px-4 py-2 hover:bg-red-200 hover:text-red-900 text-sm"
+                                  >
+                                    Reject
+                                  </button>
+                                </div>
+                              )}
+                          </div>
+                        )}
                       </td>
                     )}
                   </tr>

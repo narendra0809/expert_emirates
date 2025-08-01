@@ -1,6 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
-import logo from "../assets/navlogo.png";
-import bgVideo from "../assets/auth/bgVideo.mp4";
+import { useState, useEffect, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -77,25 +75,9 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="relative min-h-screen w-full flex flex-col md:flex-row overflow-hidden">
-      {/* ✅ Right Side Video Only */}
-      <div className="absolute right-0 top-0 md:w-1/2 w-full h-full -z-10">
-        <video
-          ref={videoRef}
-          autoPlay
-          muted
-          loop
-          playsInline
-          className="w-full h-full object-cover object-bottom rotate-180 pointer-events-none"
-        >
-          <source src={bgVideo} type="video/mp4" />
-          Your browser does not support HTML5 video.
-        </video>
-        <div className="absolute inset-0"></div>
-      </div>
-
+    <div className="relative min-h-screen w-full flex flex-col md:flex-row overflow-hidden h-full bg-black">
       {/* Left Side - Form */}
-      <div className="w-full md:w-1/2 bg-black flex items-center justify-center p-6 z-10">
+      <div className="min-h-screen w-full md:w-1/2 bg-black flex items-center justify-center p-6 z-10">
         <div className="w-full max-w-md p-8 bg-black/80 backdrop-blur-sm rounded-xl">
           <h2 className="text-2xl font-bold bg-gradient-to-b from-yellow-900 via-yellow-300 to-yellow-900 bg-clip-text text-transparent mb-1">
             Welcome back
@@ -157,14 +139,16 @@ export default function LoginPage() {
       </div>
 
       {/* Right Side - Logo with video background */}
-      <div className="w-full md:w-1/2 flex items-center justify-center z-10 p-4">
-        <div className="text-center w-96 h-auto bg-black/80 backdrop-blur-sm rounded-xl p-4">
-          <img
-            src={logo}
-            alt="Expert Emirates Logo"
-            className="w-full h-full mx-auto mb-4 object-contain"
-          />
-        </div>
+      <div className="hidden w-full md:w-1/2 sm:flex items-center justify-center z-10">
+        <video
+          ref={videoRef}
+          src="/src/assets/Expert_Emirates.mp4"
+          autoPlay
+          muted
+          loop
+          playsInline
+          className="w-full h-[121%] object-cover object-bottom pointer-events-none"
+        ></video>
       </div>
     </div>
   );

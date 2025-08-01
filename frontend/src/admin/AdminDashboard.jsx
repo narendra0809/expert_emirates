@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import totalUserIcon from "./assets/icon1.png";
 import activeUserIcon from "./assets/icon2.png";
 import totalAmountIcon from "./assets/icon3.png";
@@ -6,6 +7,7 @@ import MonthlyBarChart from "./components/MonthlyBarChart";
 import StatsChart from "./components/StatsChart";
 import StatusByProcessChart from "./components/StatusByProcessChart";
 import LatestTransactions from "./pages/LatestTransactions";
+import api from "../axios/api";
 
 const statData = [
   { icon: totalUserIcon, value: "100", title: "Total Users" },
@@ -14,6 +16,19 @@ const statData = [
 ];
 
 const AdminDashboard = () => {
+  const [transactions, setTransactions] = useState([]);
+
+  const fetchTransactions = async () => {
+    try {
+      const res = await api.get("/admin/transactions");
+      setTransactions(res.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  useEffect(() => {
+    fetchTransactions();
+  }, []);
   return (
     <div
       className={`overflow-x-hidden min-h-screen w-full bg-black text-white font-sans px-4`}
@@ -72,7 +87,10 @@ const AdminDashboard = () => {
 
       {/* Latest Transactions - Scrollable on Mobile */}
       <div className="mt-6 lg:mt-10">
-        <LatestTransactions />
+        <LatestTransactions
+          transactions={transactions}
+          fetchTransactions={fetchTransactions}
+        />
       </div>
     </div>
   );

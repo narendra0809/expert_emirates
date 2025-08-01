@@ -3,9 +3,8 @@ import { Link, useNavigate } from "react-router-dom";
 import facebook from "../assets/auth/facebook.png";
 import google from "../assets/auth/google.png";
 import apple from "../assets/auth/apple.png";
-import logo from "../assets/navlogo.png";
 import axios from "axios";
-import bgVideo from "../assets/auth/bgVideo.mp4";
+
 import { SERVER_URI } from "../constants/index.d";
 
 export default function SignUp() {
@@ -76,25 +75,9 @@ export default function SignUp() {
   }, []);
 
   return (
-    <div className="relative min-h-screen w-full flex flex-col md:flex-row overflow-hidden">
-      {/* ✅ Right Side Background Video */}
-      <div className="absolute right-0 top-0 w-1/2 h-full -z-10">
-        <video
-          ref={videoRef}
-          autoPlay
-          muted
-          loop
-          playsInline
-          className="w-full h-full object-cover object-bottom rotate-180 pointer-events-none"
-        >
-          <source src={bgVideo} type="video/mp4" />
-          Your browser does not support HTML5 video.
-        </video>
-        <div className="absolute inset-0 bg-black/40" />
-      </div>
-
+    <div className="min-h-screen w-full flex flex-col md:flex-row overflow-hidden bg-black">
       {/* Left Side - Form */}
-      <div className="w-full md:w-1/2 bg-black text-white flex items-center justify-center z-10 p-6">
+      <div className="min-h-screen w-full md:w-1/2 bg-black text-white flex items-center justify-center p-6">
         <div className="w-full max-w-md p-8 bg-black/80 backdrop-blur-sm rounded-xl">
           <h2 className="text-2xl font-bold bg-gradient-to-b from-yellow-900 via-yellow-300 to-yellow-900 bg-clip-text text-transparent mb-1">
             Create an account
@@ -191,14 +174,16 @@ export default function SignUp() {
       </div>
 
       {/* Right Side - Logo */}
-      <div className="w-full md:w-1/2 flex items-center justify-center z-10 p-4">
-        <div className="text-center w-96 h-auto bg-black/80 backdrop-blur-sm rounded-xl p-4">
-          <img
-            src={logo}
-            alt="Expert Emirates Logo"
-            className="w-full h-full mx-auto mb-4 object-contain"
-          />
-        </div>
+      <div className="hidden w-full md:w-1/2 sm:flex items-center justify-center">
+        <video
+          ref={videoRef}
+          src="/src/assets/Expert_Emirates.mp4"
+          autoPlay
+          muted
+          loop
+          playsInline
+          className="w-full h-[121%] object-cover object-bottom pointer-events-none"
+        ></video>
       </div>
     </div>
   );

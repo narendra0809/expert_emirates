@@ -1,6 +1,28 @@
+import { useEffect, useState } from "react";
 import heroImage from "../assets/dashboard/heroImage.png";
+import api from "../axios/api";
 
 export default function WelcomeBanner() {
+  const [activePlans, setActivePlans] = useState();
+
+  const fetchTransactions = async () => {
+    try {
+      const res = await api.get("/transactions");
+      if (res.status !== 200) {
+        throw new Error("Unable to get transactions");
+      }
+      setActivePlans(
+        () => res.data.filter(({ status }) => status === "approved").length
+      );
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  useEffect(() => {
+    fetchTransactions();
+  }, []);
+
+  console.log(activePlans);
   return (
     <div className="w-full bg-black">
       <div className="pt-4 pb-4 w-full rounded-2xl bg-[#1D1B25] text-white shadow-md flex flex-col md:flex-row items-center justify-between gap-6 pr-5 pl-5">
@@ -20,13 +42,12 @@ export default function WelcomeBanner() {
 
           <div className="flex flex-wrap items-center justify-center md:justify-start gap-3 text-sm">
             {/* NEED HELP / Plan Active */}
-            <span className="bg-[linear-gradient(180deg,#281000_5.95%,#C0971C_29.93%,#FFE976_52.51%,#C0971C_76.02%,#281000_100%)] bg-clip-text text-transparent font-semibold text-sm">
-              • Plan Active
+            <span className="bg-[linear-gradient(180deg,#281000_5.95%,#C0971C_29.93%,#FFE976_52.51%,#C0971C_76.02%,#281000_100%)] bg-clip-text text-transparent font-semibold text-sm sm:text-lg">
+              • Plans Active
             </span>
 
-            <span className="btn-gradient text-black pt-2 pb-2 pl-3 pr-3 rounded-full shadow-md hover:brightness-110 transition-all duration-300 btn-gradient-border">
-              Expire:{" "}
-              <span className="text-black font-semibold">28-Oct-2025</span>
+            <span className="btn-gradient text-black px-4 py-2 rounded-full shadow-md hover:brightness-110 transition-all duration-300 btn-gradient-border">
+              <span className="text-black font-bold ">{activePlans}</span>
             </span>
           </div>
         </div>
