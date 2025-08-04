@@ -1,16 +1,25 @@
 import { useEffect, useState } from "react";
 // import logoImage from "../assets/setting/image1.png";
 // import faviconImage from "../assets/setting/logo.png";
+import Favicon from "react-favicon";
 import api from "../../axios/api";
 import toast from "react-hot-toast";
+import { useDispatch } from "react-redux";
+import {
+  addIconsFailure,
+  addIconsStart,
+  addIconsSuccess,
+} from "../../features/icons/iconsSlice";
 
 const UploadCard = ({ title, imgSrc, name, onUpload, onSave }) => {
+  const url =
+    typeof imgSrc === "string" ? imgSrc : imgSrc && URL.createObjectURL(imgSrc);
   return (
     <div className="bg-[#121117] border border-[#1e1e25] rounded-xl p-4 w-full md:w-[48%] shadow-md">
       <div className="flex flex-col md:flex-row items-center gap-6">
         {/* Left Side: Larger Image */}
         <div className="bg-[#1d1b25] w-2/3  h-60 rounded-lg flex items-center justify-center overflow-hidden">
-          <img src={imgSrc} alt={title} className="" />
+          <img src={url} alt={title} className="" />
         </div>
 
         {/* Right Side: Text + Buttons center aligned */}
@@ -42,12 +51,12 @@ const UploadCard = ({ title, imgSrc, name, onUpload, onSave }) => {
   );
 };
 
-export default function LogoFaviconUpload({ iconsUrl }) {
+export default function LogoFaviconUpload({ iconsUrl, fetchSettings }) {
   const [icons, setIcons] = useState({
     logo: null,
     favicon: null,
   });
-
+  const dispatch = useDispatch();
   const checkDataExist = async () => {
     try {
       const response = await api.get("/admin/settings");
@@ -64,28 +73,49 @@ export default function LogoFaviconUpload({ iconsUrl }) {
     if (!icons.logo || !icons.favicon) {
       return;
     }
+    const updatedIcons = { ...icons };
+    if (typeof updatedIcons.logo === "string") {
+      updatedIcons.logo = null;
+    }
+    if (typeof updatedIcons.favicon === "string") {
+      updatedIcons.favicon = null;
+    }
+    dispatch(addIconsStart());
     try {
       const { data, exist } = await checkDataExist();
+      let res = null;
       if (exist) {
-        await api.patch(`/admin/settings/${data[0].id}`, icons, {
+        res = await api.patch(`/admin/settings/${data[0].id}`, updatedIcons, {
           headers: {
             "Content-Type": "multipart/form-data",
           },
         });
       } else {
-        await api.post("/admin/settings/", icons, {
+        res = await api.post("/admin/settings/", updatedIcons, {
           headers: {
             "Content-Type": "multipart/form-data",
           },
         });
       }
+      dispatch(
+        addIconsSuccess({
+          logo: res.data.data.logo,
+          favicon: res.data.data.favicon,
+        })
+      );
+      fetchSettings();
       toast.success(
         `${
-          !icons.logo ? "Favicon" : !icons.favicon ? "Logo" : "Icons"
+          !updatedIcons.logo
+            ? "Favicon"
+            : !updatedIcons.favicon
+            ? "Logo"
+            : "Icons"
         } updated successfully`,
         { duration: 3000 }
       );
     } catch (error) {
+      dispatch(addIconsFailure(error.message));
       console.log(error);
     }
   };

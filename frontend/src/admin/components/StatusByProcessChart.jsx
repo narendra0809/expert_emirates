@@ -6,24 +6,6 @@ import {
   ResponsiveContainer,
 } from "recharts";
 
-const data = [
-  {
-    name: "Total User",
-    value: 300,
-    fill: "#00C49F",
-  },
-  {
-    name: "Total Active User",
-    value: 200,
-    fill: "#F4C542",
-  },
-  {
-    name: "Total Amount",
-    value: 400,
-    fill: "#F2523C",
-  },
-];
-
 const CustomTooltip = ({ active, payload }) => {
   if (active && payload && payload.length) {
     return (
@@ -36,7 +18,7 @@ const CustomTooltip = ({ active, payload }) => {
   return null;
 };
 
-const StatusByProcessChart = () => {
+const StatusByProcessChart = ({ userStats }) => {
   return (
     <div className="bg-[#0A090D] rounded-xl p-4 w-full max-w-[360px] h-auto flex flex-col justify-between mx-auto">
       <div className="h-[230px]">
@@ -47,7 +29,7 @@ const StatusByProcessChart = () => {
             innerRadius="35%"
             outerRadius="100%"
             barSize={10}
-            data={data}
+            data={userStats}
             startAngle={180}
             endAngle={-180}
           >
@@ -66,9 +48,11 @@ const StatusByProcessChart = () => {
               dominantBaseline="middle"
               className="text-white text-[14px]"
             >
-              <tspan fill="#fff" fontSize="14">Total</tspan>
+              <tspan fill="#fff" fontSize="14">
+                Total
+              </tspan>
               <tspan x="50%" dy="18" fill="#fff" fontSize="14" fontWeight="600">
-                500
+                {userStats[2].value}
               </tspan>
             </text>
           </RadialBarChart>
@@ -77,7 +61,7 @@ const StatusByProcessChart = () => {
 
       {/* Custom Legend */}
       <div className="flex justify-around text-xs text-[#B0B3C0] mt-3 flex-wrap gap-y-2">
-        {data.map((item) => (
+        {userStats.map((item) => (
           <div key={item.name} className="flex items-center gap-1">
             <span
               className="w-2.5 h-2.5 rounded-full"

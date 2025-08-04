@@ -1,5 +1,6 @@
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
 import userReducer from "../features/user/userSlice.js";
+import iconsReducer from "../features/icons/iconsSlice.js";
 import { persistStore, persistReducer } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 
@@ -9,7 +10,7 @@ const persistConfig = {
   version: 1,
 };
 
-const rootReducer = combineReducers({ user: userReducer });
+const rootReducer = combineReducers({ user: userReducer, icons: iconsReducer });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
 

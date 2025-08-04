@@ -1,10 +1,10 @@
-import React, { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import facebook from "../assets/auth/facebook.png";
 import google from "../assets/auth/google.png";
 import apple from "../assets/auth/apple.png";
-import logo from "../assets/navlogo.png";
-import bgVideo from "../assets/auth/bgVideo.mp4";
+import toast from "react-hot-toast";
 import { Link, useNavigate } from "react-router-dom";
+import api from "../axios/api";
 
 export default function ForgotPassword() {
   const [email, setEmail] = useState("");
@@ -12,19 +12,29 @@ export default function ForgotPassword() {
   const navigate = useNavigate();
   const videoRef = useRef(null);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-
     if (!email) {
       setMessage("Please enter your email.");
       return;
     }
-
-    setMessage("");
-    console.log("Sending OTP to:", email);
-    alert("OTP sent to your email (simulate API call)");
-
-    navigate("/otp-verification", { state: { from: "forgot-password" } });
+    try {
+      const response = await api.post("/forgot-password", { email });
+      if (response.status !== 200) {
+        toast.error("Failed to sent opt. Please try again later", {
+          duration: 3000,
+        });
+        return;
+      }
+      navigate("/otp-verification", {
+        state: { from: "forgot-password", email },
+      });
+      toast.success(response.data.message, { duration: 3000 });
+      console.log(response.data);
+      setMessage("");
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   useEffect(() => {
@@ -47,25 +57,9 @@ export default function ForgotPassword() {
   }, []);
 
   return (
-    <div className="relative min-h-screen w-full flex flex-col md:flex-row overflow-hidden">
-      {/* ✅ Right Side Video */}
-      <div className="absolute right-0 top-0 w-1/2 h-full -z-10">
-        <video
-          ref={videoRef}
-          autoPlay
-          muted
-          loop
-          playsInline
-          className="w-full h-full object-cover object-bottom rotate-180 pointer-events-none"
-        >
-          <source src={bgVideo} type="video/mp4" />
-          Your browser does not support HTML5 video.
-        </video>
-        <div className="absolute inset-0 bg-black/40" />
-      </div>
-
+    <div className="relative min-h-screen w-full flex flex-col md:flex-row overflow-hidden bg-black">
       {/* ✅ Left Side - Form */}
-      <div className="w-full md:w-1/2 bg-black text-white flex items-center justify-center p-6 z-10">
+      <div className="w-full md:w-1/2  text-white flex items-center justify-center p-6 z-10">
         <div className="w-full max-w-md p-8 bg-black/80 backdrop-blur-sm rounded-xl">
           <button
             onClick={() => navigate(-1)}
@@ -78,7 +72,8 @@ export default function ForgotPassword() {
             Forgot Password
           </h2>
           <p className="text-sm text-gray-400 mb-6">
-            Enter your email to get the OTP to reset your password. We’ll send a 4-digit code.
+            Enter your email to get the OTP to reset your password. We’ll send a
+            4-digit code.
           </p>
 
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -103,18 +98,21 @@ export default function ForgotPassword() {
             </button>
 
             <div className="flex items-center justify-between gap-4 mt-4">
-              <button><img src={facebook} alt="Facebook" /></button>
-              <button><img src={google} alt="Google" /></button>
-              <button><img src={apple} alt="Apple" /></button>
+              <button>
+                <img src={facebook} alt="Facebook" />
+              </button>
+              <button>
+                <img src={google} alt="Google" />
+              </button>
+              <button>
+                <img src={apple} alt="Apple" />
+              </button>
             </div>
           </form>
 
           <p className="mt-6 text-center text-sm text-zinc-400">
             Return to{" "}
-            <Link
-              to="/login"
-              className="text-yellow-500 font-medium underline"
-            >
+            <Link to="/login" className="text-yellow-500 font-medium underline">
               Sign In
             </Link>
           </p>
@@ -122,14 +120,16 @@ export default function ForgotPassword() {
       </div>
 
       {/* ✅ Right Side Logo Block */}
-      <div className="w-full md:w-1/2 flex items-center justify-center z-10 p-4">
-        <div className="text-center w-96 h-auto bg-black/80 backdrop-blur-sm rounded-xl p-4">
-          <img
-            src={logo}
-            alt="Expert Emirates Logo"
-            className="w-full h-full mx-auto mb-4 object-contain"
-          />
-        </div>
+      <div className="hidden w-full md:w-1/2 sm:flex items-center justify-center z-10">
+        <video
+          ref={videoRef}
+          src="/src/assets/Expert_Emirates.mp4"
+          autoPlay
+          muted
+          loop
+          playsInline
+          className="w-full h-[121%] object-cover object-bottom pointer-events-none"
+        ></video>
       </div>
     </div>
   );

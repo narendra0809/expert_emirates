@@ -1,16 +1,20 @@
-import React, { useState, useRef, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useRef, useEffect } from "react";
+import { Navigate, useLocation, useNavigate } from "react-router-dom";
 import logo from "../assets/navlogo.png";
 import bgVideo from "../assets/auth/bgVideo.mp4";
+import api from "../axios/api";
+import toast from "react-hot-toast";
 
 export default function ResetPasswordPage() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const location = useLocation();
   const [message, setMessage] = useState("");
   const navigate = useNavigate();
   const videoRef = useRef(null);
+  const { from, email } = location.state || {};
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!password || !confirmPassword) {
       setMessage("Please fill out both fields.");
@@ -20,10 +24,24 @@ export default function ResetPasswordPage() {
       setMessage("Passwords do not match.");
       return;
     }
-
-    // Simulated password reset success
-    alert("Password has been reset successfully!");
-    navigate("/login");
+    try {
+      const response = await api.post("/reset-password", {
+        email,
+        password,
+        password_confirmation: confirmPassword,
+      });
+      if (response.status !== 200) {
+        toast.error("Unable to reset password ", {
+          duration: 3000,
+        });
+        return;
+      }
+      toast.success(response.data.message, { duration: 3000 });
+      console.log(response.data);
+      navigate("/login");
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   useEffect(() => {
@@ -45,6 +63,9 @@ export default function ResetPasswordPage() {
     };
   }, []);
 
+  if (from !== "otp-verification") {
+    return <Navigate to={"/"} replace />;
+  }
   return (
     <div className="relative min-h-screen w-full flex flex-col md:flex-row overflow-hidden">
       {/* ✅ Right Side Video */}

@@ -8,11 +8,17 @@ const Footer = () => {
     { title: "Trade", items: ["Dashboard"] },
     {
       title: "Pages",
-      items: ["Home", "Services", "Forecasts", "FAQ", "About", "Support"],
+      items: ["Home", "Forecasts", "FAQ", "About", "Support"],
     },
     {
       title: "Products",
-      items: ["Forex", "Gold", "Cryptocurrency", "Portfolio Management", "Copy Trading"],
+      items: [
+        "Forex",
+        "Gold",
+        "Cryptocurrency",
+        "Portfolio Management",
+        "Copy Trading",
+      ],
     },
     {
       title: "Platform",
@@ -26,7 +32,7 @@ const Footer = () => {
 
   // Split data for mobile 2 columns
   const firstColumn = sectionData.slice(0, 3); // Trade, Pages, Products
-  const secondColumn = sectionData.slice(3);   // Platform, Accounts
+  const secondColumn = sectionData.slice(3); // Platform, Accounts
 
   return (
     <footer
@@ -67,7 +73,11 @@ const Footer = () => {
                   {items.map((item) => (
                     <li key={item}>
                       <Link
-                        to={item.toLowerCase() === "home" ? `/` : `/${item.replace(/\s+/g, "-").toLowerCase()}`}
+                        to={
+                          item.toLowerCase() === "home"
+                            ? `/`
+                            : `/${item.replace(/\s+/g, "-").toLowerCase()}`
+                        }
                       >
                         {item}
                       </Link>
@@ -91,7 +101,12 @@ const Footer = () => {
               {items.map((item) => (
                 <li key={item}>
                   <Link
-                    to={item.toLowerCase() === "home" ? `/` : `/${item.replace(/\s+/g, "-").toLowerCase()}`}
+                    className="w-full hover:text-yellow-400"
+                    to={
+                      item.toLowerCase() === "home"
+                        ? `/`
+                        : `/${item.replace(/\s+/g, "-").toLowerCase()}`
+                    }
                   >
                     {item}
                   </Link>
@@ -105,35 +120,44 @@ const Footer = () => {
       {/* Contact & Social Icons */}
       <div className="flex flex-col sm:flex-row justify-between items-center mt-8 gap-4 sm:gap-0 text-center sm:text-left">
         <div className="flex items-center gap-3">
-  {/* Gold Gradient Envelope Icon */}
-  <svg
-    width="24"
-    height="24"
-    viewBox="0 0 24 24"
-    fill="url(#gold-gradient)"
-    xmlns="http://www.w3.org/2000/svg"
-  >
-    <defs>
-      <linearGradient id="gold-gradient" x1="0" y1="0" x2="1" y2="1">
-        <stop offset="0%" stop-color="#281000" />
-        <stop offset="25%" stop-color="#C0971C" />
-        <stop offset="50%" stop-color="#FFE976" />
-        <stop offset="75%" stop-color="#C0971C" />
-        <stop offset="100%" stop-color="#281000" />
-      </linearGradient>
-    </defs>
-    <rect width="24" height="18" y="3" rx="3" fill="url(#gold-gradient)" />
-    <path d="M3 6L12 13L21 6" stroke="#000" strokeWidth="1" />
-  </svg>
+          {/* Gold Gradient Envelope Icon */}
+          <svg
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="url(#gold-gradient)"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <defs>
+              <linearGradient id="gold-gradient" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stopColor="#281000" />
+                <stop offset="25%" stopColor="#C0971C" />
+                <stop offset="50%" stopColor="#FFE976" />
+                <stop offset="75%" stopColor="#C0971C" />
+                <stop offset="100%" stopColor="#281000" />
+              </linearGradient>
+            </defs>
+            <rect
+              width="24"
+              height="18"
+              y="3"
+              rx="3"
+              fill="url(#gold-gradient)"
+            />
+            <path d="M3 6L12 13L21 6" stroke="#000" strokeWidth="1" />
+          </svg>
 
-  {/* Email Text */}
-  <span className="text-white font-medium text-base">
-    info@expertemirates.com
-  </span>
-</div>
+          {/* Email Text */}
+          <span className="text-white font-medium text-base">
+            info@expertemirates.com
+          </span>
+        </div>
 
-      <img src={SocialIcons} alt="Social Media Icons" className="h-14 w-auto" />
-
+        <img
+          src={SocialIcons}
+          alt="Social Media Icons"
+          className="h-14 w-auto"
+        />
       </div>
 
       <div className="bg-[#2a2929] w-full mt-6 h-[1px] rounded-full" />

@@ -1,5 +1,4 @@
-import { Link } from "react-router-dom";
-import React, { useState, useRef } from "react";
+import { useState, useRef } from "react";
 import trophy1 from "../assets/awards/trofy1.png";
 import trophy2 from "../assets/awards/trofy2.png";
 import trophy3 from "../assets/awards/trofy3.png";
@@ -49,8 +48,6 @@ const years = ["2025", "2024", "2023", "2022", "2021", "2020", "2019"];
 const AwardsSection = () => {
   const [selectedYear, setSelectedYear] = useState("2025");
   const scrollRef = useRef(null);
-  const [blogId, setBlogId] = useState("");
-  const [blogType, setBlogType] = useState("Forex Forecast");
 
   const scrollLeft = () => {
     scrollRef.current.scrollBy({ left: -100, behavior: "smooth" });
@@ -71,10 +68,11 @@ const AwardsSection = () => {
           Awards and Recognition
         </h2>
         <p className="text-md font-semibold tracking-wider leading-relaxed text-gray-200 px-2">
-          At Expert Emirates, we are committed to providing the highest level of service and
-          innovation in the forex trading industry. Over the past 7+ years, our dedication has been
-          recognized by leading financial institutions, media organizations, and industry
-          publications. Here are some of the prestigious awards we have received.
+          At Expert Emirates, we are committed to providing the highest level of
+          service and innovation in the forex trading industry. Over the past 7+
+          years, our dedication has been recognized by leading financial
+          institutions, media organizations, and industry publications. Here are
+          some of the prestigious awards we have received.
         </p>
       </div>
 
@@ -152,8 +150,8 @@ const AwardsSection = () => {
         <WhyChooseSection />
         <CommunitySection />
         <KeyBenefits />
-        <BlogFilters blogType={blogType} setBlogType={setBlogType} />
-        <BlogCryptoForecastCards blogType={blogType} setBlogId={blogId} />
+        {/* <BlogFilters blogType={blogType} setBlogType={setBlogType} />
+        <BlogCryptoForecastCards blogType={blogType} setBlogId={blogId} /> */}
         <FeatureSection />
       </div>
     </section>

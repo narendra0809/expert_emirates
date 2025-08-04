@@ -94,7 +94,6 @@ class AuthController extends Controller
     {
         $request->validate([
             'email' => 'required|string|email|exists:users,email',
-            'otp' => 'required|string|size:6',
             'password' => [
                 'required',
                 'string',
@@ -106,8 +105,6 @@ class AuthController extends Controller
             'email.required' => 'Email is required.',
             'email.email' => 'Invalid email format.',
             'email.exists' => 'Email not found.',
-            'otp.required' => 'OTP is required.',
-            'otp.size' => 'OTP must be 6 digits.',
             'password.required' => 'Password is required.',
             'password.min' => 'Password must be 8+ characters.',
             'password.regex' => 'Password needs uppercase, lowercase, number, special character.',
@@ -116,14 +113,8 @@ class AuthController extends Controller
 
         $user = User::where('email', $request->email)->first();
 
-        if (!$user || !Hash::check($request->otp, $user->otp) || $user->otp_expires_at < now()) {
-            throw ValidationException::withMessages(['otp' => 'Invalid or expired OTP.']);
-        }
-
         $user->update([
             'password' => Hash::make($request->password),
-            'otp' => null,
-            'otp_expires_at' => null,
         ]);
 
         return response()->json(['message' => 'Password reset successfully.']);
@@ -158,5 +149,38 @@ class AuthController extends Controller
 
         return response()->json(['message' => 'Password changed successfully.'],201);
     }
+    public function verifyOtp(Request $request)
+{
+    $request->validate([
+        'email' => 'required|string|email|exists:users,email',
+        'otp' => 'required|string|size:6',
+    ], [
+        'email.required' => 'Email is required.',
+        'email.email' => 'Invalid email format.',
+        'email.exists' => 'Email not found.',
+        'otp.required' => 'OTP is required.',
+        'otp.size' => 'OTP must be 6 digits.',
+    ]);
+
+    $user = \App\Models\User::where('email', $request->email)->first();
+
+    if (
+        !$user ||
+        !$user->otp ||
+        !\Illuminate\Support\Facades\Hash::check($request->otp, $user->otp) ||
+        !$user->otp_expires_at || $user->otp_expires_at < now()
+    ) {
+        return response()->json(['success' => false, 'message' => 'Invalid or expired OTP.'], 422);
+    }
+
+    // (Optional) Invalidate OTP after verification
+    $user->update([
+        'otp' => null,
+        'otp_expires_at' => null,
+    ]);
+
+    return response()->json(['success' => true, 'message' => 'OTP verified successfully.']);
+}
+
 }
 

@@ -17,7 +17,7 @@ const plans = [
       "🎯 Swing Trading with Long-Term Vision & Low Risk",
       "🔍 100% Transparent Management with Live Updates",
       "🌴 You Focus on Life. We Focus on Your Growth.",
-      "👜 Designed for Traders Who Want Results Without the Stress"
+      "👜 Designed for Traders Who Want Results Without the Stress",
     ],
     description: "Perfect for small teams or unlimited evaluation.",
   },
@@ -26,7 +26,7 @@ const plans = [
     price: "$199",
     duration: "/ 1 TIME REGISTRATION",
     icon: <BiSolidCrown className="text-2xl text-yellow-500" />,
-   features: [
+    features: [
       "🌱 Grow big, give small, just 20% from every $1,000 gain",
       "📈 Consistent Weekly Returns of 20–30%",
       "📉 Max Daily Drawdown of 10%",
@@ -35,7 +35,7 @@ const plans = [
       "🎯 Swing Trading with Long-Term Vision & Low Risk",
       "🔍 100% Transparent Management with Live Updates",
       "🌴 You Focus on Life. We Focus on Your Growth.",
-      "👜 Designed for Traders Who Want Results Without the Stress"
+      "👜 Designed for Traders Who Want Results Without the Stress",
     ],
     description:
       "Everything in Standard, plus enhanced features for serious traders.",
@@ -92,19 +92,21 @@ export default function PricingCards() {
                   const text = feature.split(" ").slice(1).join(" ");
 
                   return (
-                   <li key={i} className="flex items-start gap-3 group cursor-pointer transition-all duration-300">
-  {/* Tick button with hover animation */}
-  <div className="min-w-[24px] min-h-[24px] rounded-full bg-gray-300 flex items-center justify-center transition-all duration-300 group-hover:bg-gradient-to-t group-hover:from-[#452e06] group-hover:via-[#d1bf5a] group-hover:to-[#452e06]">
-    <span className="text-sm font-bold text-black">✓</span>
-  </div>
+                    <li
+                      key={i}
+                      className="flex items-start gap-3 group cursor-pointer transition-all duration-300"
+                    >
+                      {/* Tick button with hover animation */}
+                      <div className="min-w-[24px] min-h-[24px] rounded-full bg-gray-300 flex items-center justify-center transition-all duration-300 group-hover:bg-gradient-to-t group-hover:from-[#452e06] group-hover:via-[#d1bf5a] group-hover:to-[#452e06]">
+                        <span className="text-sm font-bold text-black">✓</span>
+                      </div>
 
-  {/* Icon + text */}
-  <span className="flex items-start gap-2 font-medium text-gray-200 leading-snug">
-    <span className="text-xl">{icon}</span>
-    {text}
-  </span>
-</li>
-
+                      {/* Icon + text */}
+                      <span className="flex items-start gap-2 font-medium text-gray-200 leading-snug">
+                        <span className="text-xl">{icon}</span>
+                        {text}
+                      </span>
+                    </li>
                   );
                 })}
               </ul>

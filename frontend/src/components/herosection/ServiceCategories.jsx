@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import wave from "../../assets/stayar.png";
 
@@ -34,11 +34,7 @@ const ServicesCard = () => {
     <div className="bg-black rounded-xl p-6 xl:min-h-[200px] lg:min-h-[440px] h-full w-full max-w-xl text-white relative overflow-hidden">
       {/* Background effect */}
       <div className="absolute inset-0 z-0">
-        <img
-          src={wave}
-          alt="background"
-          className="w-full h-full "
-        />
+        <img src={wave} alt="background" className="w-full h-full " />
         <div className="absolute inset-0 bg-black opacity-40" />
       </div>
 

@@ -19,6 +19,7 @@ import AdminSettings from "./admin/pages/AdminSettings";
 import CreatePost from "./admin/pages/CreatePost";
 import PaymentMethod from "./admin/pages/PaymentMethod";
 import ViewPosts from "./admin/pages/ViewPosts";
+import NotFound from "./pages/NotFound";
 // import StatusByProcessChart from "./admindashboad/StatusByProcessChart";
 
 // Lazy-loaded components
@@ -62,6 +63,7 @@ export default function AppRoutes() {
   const hideNavbarFooter =
     location.pathname.startsWith("/dashboard") ||
     location.pathname.startsWith("/admin") ||
+    location.pathname.startsWith("/blog/read-blog") ||
     authRoutes.includes(location.pathname);
 
   return (
@@ -118,6 +120,7 @@ export default function AppRoutes() {
             <Route path="/admin/blog/view" element={<ViewPosts />} />
             <Route path="/admin/setting" element={<AdminSettings />} />
           </Route>
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </Suspense>
       {!hideNavbarFooter && <Footer />}

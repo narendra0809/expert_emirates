@@ -14,7 +14,7 @@ const Card = ({ number, text, img }) => {
             WebkitTextFillColor: "transparent",
           }}
         >
-          {number}
+          {text === "Total Amount" ? `$ ${number}` : number}
         </h2>
         <p className="text-sm text-gray-300">{text}</p>
       </div>

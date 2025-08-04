@@ -11,28 +11,13 @@ import {
   LabelList,
 } from "recharts";
 
-const data = [
-  { name: "Jan", value: 16 },
-  { name: "Feb", value: 58 },
-  { name: "Mar", value: 36 },
-  { name: "Apr", value: 33 },
-  { name: "May", value: 79 },
-  { name: "Jun", value: 86 },
-  { name: "Jul", value: 54 },
-  { name: "Aug", value: 27 },
-  { name: "Sep", value: 80 },
-  { name: "Oct", value: 78 },
-  { name: "Nov", value: 97 },
-  { name: "Dec", value: 76 },
-];
-
-const MonthlyBarChart = () => {
+const MonthlyBarChart = ({ usersPerMonth }) => {
   return (
     <div className="w-full sm:p-4 bg-[#0A090D] rounded-xl  overflow-hidden">
       <div className="w-full h-[300px] sm:h-[350px] md:h-[400px] lg:h-[450px]">
         <ResponsiveContainer width="100%" height="100%">
           <BarChart
-            data={data}
+            data={usersPerMonth}
             margin={{
               top: 20,
               right: 20,

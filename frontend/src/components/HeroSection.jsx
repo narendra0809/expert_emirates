@@ -1,9 +1,13 @@
-import React, { useState } from "react";
+/* eslint-disable no-unused-vars */
+import { useState } from "react";
 import video from "../assets/Expert_Emirates.mp4";
 import { motion } from "framer-motion";
-
+import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 const HeroSection = () => {
   const [hoveredBtn, setHoveredBtn] = useState(null); // null | 'btn1' | 'btn2'
+  const { currentUser } = useSelector((state) => state.user);
+  const navigate = useNavigate();
 
   const getButtonStyle = (btn) => {
     const isHovered = hoveredBtn === btn;
@@ -49,12 +53,11 @@ const HeroSection = () => {
         >
           {/* Small Tagline Button */}
           <div className="inline-flex items-center justify-center my-9">
-           <div className="inline-block rounded-full bg-gradient-to-b from-[#7C4B00] to-[#FFE9A0] p-[1px]">
-  <button className="rounded-full bg-[#0F0F0F] px-6 py-[10px] text-white font-poppins font-medium text-base leading-[100%] tracking-[0.12em]">
-    Turning Hopes Into Reality
-  </button>
-</div>
-
+            <div className="inline-block rounded-full bg-gradient-to-b from-[#7C4B00] to-[#FFE9A0] p-[1px]">
+              <button className="rounded-full bg-[#0F0F0F] px-6 py-[10px] text-white font-poppins font-medium text-base leading-[100%] tracking-[0.12em]">
+                Turning Hopes Into Reality
+              </button>
+            </div>
           </div>
 
           {/* Heading */}
@@ -72,16 +75,19 @@ const HeroSection = () => {
 
           {/* Description */}
           <p className="text-white font-inter font-normal text-[16px] leading-[22px] tracking-[0.12em]">
-            Join the worldwide network of profitable traders with the best in forex expertise!
+            Join the worldwide network of profitable traders with the best in
+            forex expertise!
           </p>
 
           {/* Buttons */}
           <div className="flex gap-4 mt-10 flex-wrap">
             {/* START FREE TRIAL (default: gradient) */}
+
             <div className="p-[2px] rounded-full bg-[linear-gradient(90deg,#281000_0%,#C0971C_25.5%,#FFE976_49.5%,#C0971C_74.5%,#281000_100%)] shadow-[0_0_17px_rgba(254,214,0,0.2)]">
               <button
                 onMouseEnter={() => setHoveredBtn("btn1")}
                 onMouseLeave={() => setHoveredBtn(null)}
+                onClick={() => navigate("/dashboard")}
                 className={`min-w-[140px] md:min-w-[165px] h-[39px] px-[18px] py-[7px] rounded-full font-bold text-sm font-poppins transition duration-300 ${getButtonStyle(
                   "btn1"
                 )}`}
@@ -95,6 +101,11 @@ const HeroSection = () => {
               <button
                 onMouseEnter={() => setHoveredBtn("btn2")}
                 onMouseLeave={() => setHoveredBtn(null)}
+                onClick={() =>
+                  document
+                    .getElementById("market_section")
+                    .scrollIntoView({ behavior: "smooth" })
+                }
                 className={`min-w-[140px] md:min-w-[165px] h-[39px] px-[18px] py-[7px] rounded-full font-bold text-sm font-poppins transition duration-300 ${getButtonStyle(
                   "btn2"
                 )}`}

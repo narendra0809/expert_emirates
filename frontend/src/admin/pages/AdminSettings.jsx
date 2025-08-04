@@ -98,7 +98,7 @@ export default function AdminSettings() {
 
       {/* SECURITY TAB */}
       {activeTab === "Security" && <PasswordResetTab />}
-      <LogoFaviconUpload iconsUrl={icons} />
+      <LogoFaviconUpload iconsUrl={icons} fetchSettings={fetchSettings} />
     </main>
   );
 }

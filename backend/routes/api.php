@@ -16,6 +16,7 @@ use App\Http\Controllers\Api\PaymentGatewayController;
 Route::post('register', [AuthController::class, 'register']);
 Route::post('login', [AuthController::class, 'login']);
 Route::post('forgot-password', [AuthController::class, 'forgotPassword']);
+Route::post('verify-otp', [AuthController::class, 'verifyOtp']);
 Route::post('reset-password', [AuthController::class, 'resetPassword']);
 
 Route::middleware('auth:sanctum')->group(function () {
@@ -25,6 +26,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('plans', [PlanController::class, 'index']);
     Route::get('settings', [SettingController::class, 'index']);
     Route::get('plans/{plan}', [PlanController::class, 'show']);
+    Route::get('blogs', [BlogController::class,"index"]);
     Route::post('plans/buy', [TransactionController::class, 'buy']);
     Route::get('my-plans', [PlanController::class, 'myPlans']);
     Route::get('transactions', [TransactionController::class, 'userTransactions']);

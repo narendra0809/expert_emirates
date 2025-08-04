@@ -1,16 +1,19 @@
-import React, { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect } from "react";
 import logo from "../assets/navlogo.png";
 import bgVideo from "../assets/auth/bgVideo.mp4";
-import { useLocation, useNavigate } from "react-router-dom";
+import { Navigate, useLocation, useNavigate } from "react-router-dom";
+import api from "../axios/api";
+import toast from "react-hot-toast";
 
 export default function OtpVerificationPage() {
-  const [otp, setOtp] = useState(["", "", "", ""]);
+  const [otp, setOtp] = useState(["", "", "", "", "", ""]);
   const [message, setMessage] = useState("");
   const [timer, setTimer] = useState(120);
   const inputsRef = useRef([]);
   const videoRef = useRef(null);
   const location = useLocation();
   const navigate = useNavigate();
+  const { email, from } = location.state;
 
   const handleChange = (index, value) => {
     if (!/^[0-9]?$/.test(value)) return;
@@ -19,7 +22,7 @@ export default function OtpVerificationPage() {
     newOtp[index] = value;
     setOtp(newOtp);
 
-    if (value && index < 3) {
+    if (value && index < 5) {
       inputsRef.current[index + 1].focus();
     }
   };
@@ -30,18 +33,32 @@ export default function OtpVerificationPage() {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const fullOtp = otp.join("");
 
-    if (fullOtp.length < 4) {
-      setMessage("Please enter all 4 digits");
+    if (fullOtp.length < 5) {
+      setMessage("Please enter all 6 digits");
       return;
     }
-
-    setMessage("");
-    console.log("Verifying OTP:", fullOtp);
-    alert("OTP Verified (Simulated)");
+    try {
+      const response = await api.post("/verify-otp", { otp: fullOtp, email });
+      if (!response.data.success) {
+        toast.error(response.data.message, {
+          duration: 3000,
+        });
+        return;
+      }
+      toast.success(response.data.message, { duration: 3000 });
+      navigate("/reset-password", {
+        state: {
+          from: "otp-verification",
+          email,
+        },
+      });
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const handleResend = () => {
@@ -64,7 +81,9 @@ export default function OtpVerificationPage() {
   };
 
   useEffect(() => {
-    inputsRef.current[0].focus();
+    if (from === "forgot-password") {
+      inputsRef.current[0].focus();
+    }
   }, []);
 
   useEffect(() => {
@@ -94,6 +113,9 @@ export default function OtpVerificationPage() {
     return `${m}:${s}`;
   };
 
+  if (from !== "forgot-password") {
+    return <Navigate to={"/"} replace />;
+  }
   return (
     <div className="relative min-h-screen w-full flex flex-col md:flex-row overflow-hidden">
       {/* ✅ Right Side Video */}

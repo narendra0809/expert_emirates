@@ -11,12 +11,6 @@ import {
   ResponsiveContainer,
 } from "recharts";
 
-const data = [
-  { name: "Total User", value: 10, fill: "#E56A54" },
-  { name: "Total Active User", value: 5, fill: "#DEB250" },
-  { name: "Total Amount", value: 8, fill: "#EA4D2D" },
-];
-
 const CustomTooltip = ({ active, payload }) => {
   if (active && payload && payload.length) {
     return (
@@ -28,15 +22,16 @@ const CustomTooltip = ({ active, payload }) => {
   return null;
 };
 
-const HorizontalBarChart = () => {
+const HorizontalBarChart = ({ userStats }) => {
   return (
     <div className="rounded-2xl w-full max-w-full">
       <div className="min-w-[300px] sm:min-w-full h-64 sm:h-72 md:h-80 lg:h-96">
         <ResponsiveContainer width="100%" height="100%">
           <BarChart
             layout="vertical"
-            data={data}
-            margin={{ top: 20, right: 20, left: 20, bottom: 20 }}
+            data={userStats}
+            // Reduce left/right margins for tighter fit
+            margin={{ top: 20, right: 20, left: 5, bottom: 20 }}
             barSize={30}
           >
             <CartesianGrid strokeDasharray="3 3" stroke="#2E334B" />
@@ -51,7 +46,8 @@ const HorizontalBarChart = () => {
               type="category"
               stroke="#B0B3C2"
               tick={{ fontSize: 10 }}
-              width={130}
+              // Reduce width from 130 to 80 (adjust as needed)
+              width={80}
             />
             <Tooltip content={<CustomTooltip />} />
             <Legend
