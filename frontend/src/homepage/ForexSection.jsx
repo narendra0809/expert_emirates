@@ -79,8 +79,8 @@ const ForexSection = () => {
         </div>
       </section>
 
-      <StockMarcketChart />
-      <CurrencyMarket />
+      <StockMarcketChart isForex={true} />
+      <CurrencyMarket isForex={true} />
 
       <TrustSection />
       <PricingSection />

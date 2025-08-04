@@ -16,22 +16,22 @@ import WhatIsComex from "./WhatIsComex";
 export default function Gold() {
   return (
     <div>
-      <GoldCard/>
-      <CategoryTabs/>
-      <ForexGoldInfo/>
-      <WhatIsComex/>
+      <GoldCard />
+      <CategoryTabs />
+      <ForexGoldInfo />
+      <WhatIsComex />
       {/* <ForexInfo/> */}
-      <ComexFeatures/>
-      <TutorialVideo/>
-      <ExpertTrade/>
+      <ComexFeatures />
+      <TutorialVideo />
+      <ExpertTrade />
       <div className="bg-black py-4">
-  <CurrencyMarket />
-</div>
+        <CurrencyMarket isForex={true} />
+      </div>
 
-      <PopularSharesTable/>
-      <MetalsTable/>
-      <WhyTradersTrustUs/>
-      <FeatureSection/>
+      <PopularSharesTable isForex={true} />
+      {/* <MetalsTable /> */}
+      <WhyTradersTrustUs />
+      <FeatureSection />
     </div>
   );
 }

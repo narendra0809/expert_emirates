@@ -17,13 +17,13 @@ export default function Forex() {
       <div className="w-full">
         <ForexHeroSection />
         <CategoryTabs />
-        <ForexGoldInfo/>
+        <ForexGoldInfo />
         <ForexInfo />
         <TutorialVideo />
         <ExpertTrade />
-        <CurrencyMarket />
-        <PopularSharesTable />
-        <MetalsTable />
+        <CurrencyMarket isForex={true} />
+        <PopularSharesTable isForex={true} />
+        {/* <MetalsTable /> */}
         <WhyTradersTrustUs />
         <FeatureSection />
       </div>

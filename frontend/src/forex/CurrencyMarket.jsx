@@ -1,16 +1,83 @@
-import React, { useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import { ArrowUpRight } from "lucide-react";
 
-const cardData = [
-  { pair: "EUR/USD", price: "1.1089", change: "+0.0042", percent: "+0.38%", currency: "USD" },
-  { pair: "USD/CAD", price: "1.3690", change: "+0.0034", percent: "+0.25%", currency: "CAD" },
-  { pair: "GBP/USD", price: "1.2921", change: "-0.0021", percent: "-0.16%", currency: "USD" },
-  { pair: "AUD/USD", price: "0.6789", change: "+0.0018", percent: "+0.27%", currency: "USD" },
-  { pair: "USD/JPY", price: "146.25", change: "-0.1100", percent: "-0.08%", currency: "JPY" },
+const forexData = [
+  {
+    pair: "EUR/USD",
+    price: "1.1089",
+    change: "+0.0042",
+    percent: "+0.38%",
+    currency: "USD",
+  },
+  {
+    pair: "USD/CAD",
+    price: "1.3690",
+    change: "+0.0034",
+    percent: "+0.25%",
+    currency: "CAD",
+  },
+  {
+    pair: "GBP/USD",
+    price: "1.2921",
+    change: "-0.0021",
+    percent: "-0.16%",
+    currency: "USD",
+  },
+  {
+    pair: "AUD/USD",
+    price: "0.6789",
+    change: "+0.0018",
+    percent: "+0.27%",
+    currency: "USD",
+  },
+  {
+    pair: "USD/JPY",
+    price: "146.25",
+    change: "-0.1100",
+    percent: "-0.08%",
+    currency: "JPY",
+  },
+];
+const cryptoData = [
+  {
+    pair: "BTC/USD",
+    price: "29658.45",
+    change: "+320.12",
+    percent: "+1.09%",
+    currency: "USD",
+  },
+  {
+    pair: "ETH/USD",
+    price: "1854.32",
+    change: "+12.80",
+    percent: "+0.70%",
+    currency: "USD",
+  },
+  {
+    pair: "XRP/USD",
+    price: "0.4892",
+    change: "-0.0050",
+    percent: "-1.01%",
+    currency: "USD",
+  },
+  {
+    pair: "LTC/USD",
+    price: "92.15",
+    change: "+1.23",
+    percent: "+1.35%",
+    currency: "USD",
+  },
+  {
+    pair: "ADA/USD",
+    price: "0.2378",
+    change: "-0.0021",
+    percent: "-0.88%",
+    currency: "USD",
+  },
 ];
 
-export default function CurrencyMarket() {
+export default function CurrencyMarket({ isForex }) {
   const containerRef = useRef(null);
 
   useEffect(() => {
@@ -32,33 +99,42 @@ export default function CurrencyMarket() {
 
     return () => cancelAnimationFrame(animationFrameId);
   }, []);
-
-  const repeatedCards = [...cardData, ...cardData, ...cardData]; // repeat for smooth loop
+  const data = isForex ? forexData : cryptoData;
+  const repeatedCards = [...data, ...data, ...data];
 
   return (
-    <div className="bg-black py-6 overflow-hidden" ref={containerRef} style={{ whiteSpace: "nowrap" }}>
+    <div
+      className="bg-black py-6 overflow-hidden"
+      ref={containerRef}
+      style={{ whiteSpace: "nowrap" }}
+    >
       <div className="flex w-max gap-5">
         {repeatedCards.map((card, index) => (
           <motion.div
             key={index}
             className="min-w-[270px] h-[210px] rounded-2xl relative overflow-hidden shadow-xl p-5 text-white flex flex-col justify-between"
-  style={{
-      backgroundImage: "url('/images/Frame 1984077895.png')",
-    backgroundSize: "cover",
-    backgroundPosition: "center",
-    backgroundRepeat: "no-repeat",
-    backgroundColor: "#121117",
-  }}
+            style={{
+              backgroundImage: "url('/images/Frame 1984077895.png')",
+              backgroundSize: "cover",
+              backgroundPosition: "center",
+              backgroundRepeat: "no-repeat",
+              backgroundColor: "#121117",
+            }}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: index * 0.05 }}
           >
             {/* Card Header */}
             <div>
-              <h3 className="text-white font-semibold text-sm tracking-wide">{card.pair}</h3>
+              <h3 className="text-white font-semibold text-sm tracking-wide">
+                {card.pair}
+              </h3>
               <p className="text-sm text-gray-300 mt-2">CURRENT PRICE</p>
               <div className="text-xl font-bold text-[#FFE976] flex items-end">
-                {card.price} <span className="text-sm ml-1 text-[#FFE976]">{card.currency}</span>
+                {card.price}{" "}
+                <span className="text-sm ml-1 text-[#FFE976]">
+                  {card.currency}
+                </span>
               </div>
             </div>
 
@@ -87,7 +163,8 @@ export default function CurrencyMarket() {
                 e.currentTarget.style.backgroundImage =
                   "linear-gradient(#121117, #121117), linear-gradient(90deg, #281000 0%, #C0971C 25.5%, #FFE976 50.5%, #C0971C 74.5%, #281000 100%)";
                 e.currentTarget.style.backgroundOrigin = "border-box";
-                e.currentTarget.style.backgroundClip = "padding-box, border-box";
+                e.currentTarget.style.backgroundClip =
+                  "padding-box, border-box";
                 e.currentTarget.style.color = "white";
               }}
               onMouseLeave={(e) => {

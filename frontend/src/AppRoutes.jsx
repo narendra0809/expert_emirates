@@ -20,6 +20,8 @@ import CreatePost from "./admin/pages/CreatePost";
 import PaymentMethod from "./admin/pages/PaymentMethod";
 import ViewPosts from "./admin/pages/ViewPosts";
 import NotFound from "./pages/NotFound";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
+import TermsAndConditions from "./pages/TermsAndConditions";
 // import StatusByProcessChart from "./admindashboad/StatusByProcessChart";
 
 // Lazy-loaded components
@@ -89,6 +91,9 @@ export default function AppRoutes() {
           <Route path="/company-news" element={<CompanyNews />} />
           <Route path="/forex" element={<Forex />} />
           <Route path="/gold" element={<Gold />} />
+          <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+          <Route path="/terms-and-condition" element={<TermsAndConditions />} />
+
           <Route path="/cryptocurrency" element={<CryptoCurrency />} />
           <Route path="/funded-accounts" element={<FundedAccounts />} />
           <Route path="/trading-bot" element={<TradingBot />} />

@@ -15,20 +15,20 @@ import CriptoTrading from "./CriptoTrading";
 export default function CryptoCurrency() {
   return (
     <div>
-      <CryptoHeroSection/>
-     <CategoryTabs/>
-     <WhatisCrypto/>
-     <CriptoTrading/>
-     {/* <ComexFeatures/> */}
-     <TutorialVideo/>
-     <ExpertTrade/>
+      <CryptoHeroSection />
+      <CategoryTabs />
+      <WhatisCrypto />
+      <CriptoTrading />
+      {/* <ComexFeatures/> */}
+      <TutorialVideo />
+      <ExpertTrade />
       <div className="bg-black py-4">
-      <CurrencyMarket />
-    </div>
-     <PopularSharesTable/>
-     <MetalsTable/>
-     <WhyTradersTrustUs/>
-     <FeatureSection/>
+        <CurrencyMarket isForex={false} />
+      </div>
+      <PopularSharesTable isForex={false} />
+      {/* <MetalsTable /> */}
+      <WhyTradersTrustUs />
+      <FeatureSection />
     </div>
   );
 }
